@@ -1,0 +1,10 @@
+<template>
+  <div>
+    <button click.trigger="decrement()">-</button>
+    <span>${counter}</span>
+    <button click.trigger="increment()">+</button>
+  </div>
+  <div>
+      <input type="text" value.bind="counter">
+  </div>
+</template>

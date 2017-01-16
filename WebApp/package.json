@@ -1,0 +1,33 @@
+{
+  "name": "kafka-blotter-webapp",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Steven Davis",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "build": "tsc -w",
+    "serve": "node server.js"
+  },
+  "keywords": [],
+  "devDependencies": {
+    "jspm": "^0.16.47",
+    "typescript": "^2.1.5",
+    "serve-index": "^1.8.0"
+  },
+  "dependencies": {
+    "systemjs": "^0.19.41",
+    "express": "^4.10.0"
+  },
+  "jspm": {
+    "directories": {
+      "baseURL": "app"
+    },
+    "dependencies": {
+      "aurelia-bootstrapper": "npm:aurelia-bootstrapper@^2.0.1",
+      "aurelia-framework": "npm:aurelia-framework@^1.0.8",
+      "aurelia-pal-browser": "npm:aurelia-pal-browser@^1.1.0"
+    },
+    "devDependencies": {}
+  }
+}
