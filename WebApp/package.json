@@ -12,8 +12,9 @@
   "keywords": [],
   "devDependencies": {
     "jspm": "^0.16.47",
+    "serve-index": "^1.8.0",
     "typescript": "^2.1.5",
-    "serve-index": "^1.8.0"
+    "typings": "^2.1.0"
   },
   "dependencies": {
     "systemjs": "^0.19.41",

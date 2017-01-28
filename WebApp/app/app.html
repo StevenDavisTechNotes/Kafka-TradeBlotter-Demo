@@ -1,4 +1,5 @@
 <template>
+  <require from = "./components/exposure-analytics.html"></require>  
   <div>
     <button click.trigger="decrement()">-</button>
     <span>${counter}</span>
@@ -7,4 +8,6 @@
   <div>
       <input type="text" value.bind="counter">
   </div>
+  
+  <exposure-analytics></exposure-analytics>
 </template>
