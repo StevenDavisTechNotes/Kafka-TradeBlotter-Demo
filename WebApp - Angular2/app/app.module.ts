@@ -13,18 +13,6 @@ import {ParamsComponent} from "./params.component";
 import {CubeComponent} from "./cube.component";
 import {CurrencyComponent} from "./currency.component";
 
-// floating row
-import {WithFloatingRowComponent} from "./floating-row-renderer.component";
-import {StyledComponent} from "./styled-renderer.component";
-// full width
-import {WithFullWidthComponent} from "./full-width-renderer.component";
-import {NameAndAgeRendererComponent} from "./name-age-renderer.component";
-// grouped inner
-import {MedalRendererComponent} from "./medal-renderer.component";
-import {WithGroupRowComponent} from "./group-row-renderer.component";
-// filter
-import {FilterComponentComponent} from "./filter-component.component";
-import {PartialMatchFilterComponent} from "./partial-match-filter.component";
 // master detail
 import {MasterComponent} from "./masterdetail-master.component";
 import {DetailPanelComponent} from "./detail-panel.component";
@@ -45,10 +33,6 @@ const appRoutes: Routes = [
                 CubeComponent,
                 ParamsComponent,
                 CurrencyComponent,
-                StyledComponent,
-                NameAndAgeRendererComponent,
-                MedalRendererComponent,
-                PartialMatchFilterComponent,
                 DetailPanelComponent
             ])
     ],
@@ -59,14 +43,6 @@ const appRoutes: Routes = [
         CubeComponent,
         ParamsComponent,
         CurrencyComponent,
-        WithFloatingRowComponent,
-        StyledComponent,
-        WithFullWidthComponent,
-        NameAndAgeRendererComponent,
-        WithGroupRowComponent,
-        MedalRendererComponent,
-        FilterComponentComponent,
-        PartialMatchFilterComponent,
         MasterComponent,
         DetailPanelComponent
     ],
