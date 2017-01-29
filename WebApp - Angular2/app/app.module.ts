@@ -7,7 +7,8 @@ import {AgGridModule} from "ag-grid-ng2/main";
 // application
 import {AppComponent} from "./app.component";
 
-// master detail
+// import {ExposureModule} from "./exposure.module";
+import {ExposureComponent} from "./exposure.component";
 import {MasterComponent} from "./masterdetail-master.component";
 import {DetailPanelComponent} from "./detail-panel.component";
 
@@ -17,8 +18,8 @@ import {TradeEntryComponent} from "./trade-entry.component";
 import {QuoteEntryComponent} from "./quote-entry.component";
 
 const appRoutes: Routes = [
-    {path: 'master-detail', component: MasterComponent, data: {title: "Master Detail Example"}},
-    {path: '', redirectTo: 'master-detail', pathMatch: 'full'}
+    {path: 'exposure', component: ExposureComponent, data: {title: "Master Detail Example"}},
+    {path: '', redirectTo: 'exposure', pathMatch: 'full'}
 ];
 
 @NgModule({
@@ -29,14 +30,16 @@ const appRoutes: Routes = [
         AgGridModule.withComponents(
             [
                 DetailPanelComponent
-            ])
+            ]),
+            //ExposureModule
     ],
     declarations: [
         AppComponent,
+        TradeEntryComponent,
+        QuoteEntryComponent,
         MasterComponent,
         DetailPanelComponent,
-        TradeEntryComponent,
-        QuoteEntryComponent
+        ExposureComponent,
     ],
     bootstrap: [AppComponent]
 })

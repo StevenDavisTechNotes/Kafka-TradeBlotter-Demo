@@ -4,7 +4,7 @@ import {DetailPanelComponent} from "./detail-panel.component";
 
 @Component({
     moduleId: module.id,
-    selector: 'ag-masterdetail-master',
+    selector: 'masterdetail-master',
     templateUrl: 'masterdetail-master.component.html'
 })
 export class MasterComponent implements AfterViewInit{
