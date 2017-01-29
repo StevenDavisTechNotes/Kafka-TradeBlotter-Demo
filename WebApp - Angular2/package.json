@@ -1,0 +1,79 @@
+{
+  "name": "ag-grid-ng2-example",
+  "version": "7.2.0",
+  "description": "ag-Grid Angular 2 Example Using SystemJS",
+  "scripts": {
+    "postinstall": "webdriver-manager update",
+
+    "tsc": "tsc -p tsconfig.json",
+    "tsc:w": "tsc -p tsconfig.json -w",
+    "lite": "lite-server",
+    "clean": "npm run clean:jit && npm run clean:aot",
+    "clean:jit": "rimraf app/*.js*",
+    "start": "npm run tsc && concurrently \"npm run tsc:w\" \"npm run lite\" ",
+
+    "clean:aot": "rimraf aot/aot/* && rimraf aot/app/* && rimraf aot/dist/* && rimraf aot/node_modules/* && rimraf app/*.js* aot/e2e",
+    "build:aot": "ngc -p tsconfig-aot.json && gulp aot-bundle",
+    "lite:aot": "lite-server -c aot/bs-config.json",
+    "clean-build:aot": "npm run clean:aot && npm run build:aot",
+
+    "test": "tsc && concurrently \"tsc -w\" \"karma start karma.conf.js\"",
+    "e2e": "tsc && concurrently \"http-server -s\" \"protractor protractor.config.js\" --kill-others --success first"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ceolter/ag-grid-ng2-example.git"
+  },
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ceolter/ag-grid-ng2-example/issues"
+  },
+  "homepage": "http://www.ag-grid.com/",
+  "dependencies": {
+    "ag-grid": "7.2.x",
+    "ag-grid-enterprise": "7.2.x",
+    "ag-grid-ng2": "7.2.x",
+
+    "@angular/common": "2.4.x",
+    "@angular/compiler": "2.4.x",
+    "@angular/compiler-cli": "2.4.x",
+    "@angular/core": "2.4.x",
+    "@angular/http": "2.4.x",
+    "@angular/forms": "2.4.x",
+    "@angular/platform-browser": "2.4.x",
+    "@angular/platform-browser-dynamic": "2.4.x",
+    "@angular/platform-server": "2.4.x",
+    "@angular/router": "3.4.x",
+    "rxjs": "5.0.x",
+    "zone.js": "0.7.x",
+    "core-js": "2.4.x",
+    "systemjs": "0.19.27",
+    "bootstrap": "3.3.6",
+    "jquery": "3.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "6.0.45",
+    "concurrently": "2.2.0",
+    "typescript": "2.1.4",
+    "rimraf": "2.5.x",
+    "gulp": "3.9.1",
+    "lite-server": "2.2.2",
+    "systemjs-builder": "0.15.33",
+    "copyfiles": "1.0.x",
+    "ncp": "2.0.x",
+
+    "@types/selenium-webdriver": "2.53.33",
+    "http-server": "^0.9.0",
+    "canonical-path": "0.0.2",
+    "jasmine-core": "2.4.1",
+    "karma": "1.3.0",
+    "karma-chrome-launcher": "2.0.0",
+    "karma-cli": "1.0.1",
+    "karma-jasmine": "1.0.2",
+    "karma-jasmine-html-reporter": "0.2.2",
+    "karma-systemjs": "0.16.0",
+    "protractor": "4.0.13",
+    "webdriver-manager": "10.2.5"
+  }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ag-Grid Angular 2 AOT Example</title>
+    <base href="/">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+
+    <script src="shim.min.js"></script>
+    <script src="zone.min.js"></script>
+
+    <!-- ag-grid CSS -->
+    <!-- In your build, you will probably want to include the css in your bundle. -->
+    <!-- To do this you will use a CSS Loader. How to do this is not an ag-Grid -->
+    <!-- problem, so I've not included how to do it here. For simplicity, and -->
+    <!-- explicitness, the CSS files are loaded in directly here. -->
+    <link href="ag-grid.css" rel="stylesheet" />
+    <link href="theme-fresh.css" rel="stylesheet" />
+
+    <link href="bootstrap.css" rel="stylesheet" />
+
+    <script>window.module = 'aot';</script>
+</head>
+
+<!-- 3. Display the application -->
+<body>
+<my-app>Loading...</my-app>
+</body>
+<script src="./dist/bundle.js"></script>
+
+</html>
