@@ -20,7 +20,7 @@ namespace TickingViewSvc.Controllers
         }
         // GET: api/ViewPosition
         [HttpGet]
-        public IEnumerable<ViewPosition> GetAll()
+        public IEnumerable<Exposure> GetAll()
         {
             return viewEngine.GetPositionView();
         }

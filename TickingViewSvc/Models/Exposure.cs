@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace TickingViewSvc.Models
+﻿namespace TickingViewSvc.Models
 {
-    public class ViewPosition
+    public class Exposure
     {
-        public string Key { get; set; }
+        public string Key => $"{Security}";
         public string Security { get; set; }
 
         public decimal SODAmount { get; set; }
         public decimal TgtAmount { get; set; }
         public decimal StgAmount { get; set; }
         public decimal CmtAmount { get; set; }
+        public decimal DoneAmount { get; set; }
 
         public decimal SODUSDExposure { get; set; }
         public decimal TgtUSDExposure { get; set; }
@@ -24,5 +20,6 @@ namespace TickingViewSvc.Models
         public decimal TgtIntradayPLUSD { get; set; }
         public decimal StgIntradayPLUSD { get; set; }
         public decimal CmtIntradayPLUSD { get; set; }
+        public Position[] Positions { get; set; }
     }
 }
