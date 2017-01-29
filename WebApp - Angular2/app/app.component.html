@@ -6,4 +6,14 @@
     </template>
 </ul>
 
-<router-outlet></router-outlet>
+<div id="app" class="wrapper">
+    <div class="box">
+        <router-outlet></router-outlet>
+    </div>
+    <div class="box">
+        <trade-entry></trade-entry>
+    </div>
+    <div class="box">
+        <quote-entry></quote-entry>
+    </div>
+</div>

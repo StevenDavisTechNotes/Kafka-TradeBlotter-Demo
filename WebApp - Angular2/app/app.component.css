@@ -1,0 +1,22 @@
+* {
+    box-sizing: border-box;
+}
+
+.nav-pills {
+  display: none;
+}
+
+#app .wrapper {
+  display: grid;
+  background-color: #fff;
+  color: #444;
+}
+
+#app .box {
+  background-color: #444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 150%;
+  float: left;
+}
