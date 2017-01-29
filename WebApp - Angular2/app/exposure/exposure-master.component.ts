@@ -1,13 +1,13 @@
 import {Component,AfterViewInit} from "@angular/core";
 import {GridOptions} from "ag-grid/main";
-import {DetailPanelComponent} from "./detail-panel.component";
+import {ExposureDetailPanelComponent} from "./exposure-detail-panel.component";
 
 @Component({
     moduleId: module.id,
-    selector: 'masterdetail-master',
-    templateUrl: 'masterdetail-master.component.html'
+    selector: 'exposure-master',
+    templateUrl: 'exposure-master.component.html'
 })
-export class MasterComponent implements AfterViewInit{
+export class ExposureMasterComponent implements AfterViewInit{
     public gridOptions: GridOptions;
 
     constructor() {
@@ -44,7 +44,7 @@ export class MasterComponent implements AfterViewInit{
     }
 
     public getFullWidthCellRenderer() {
-        return DetailPanelComponent;
+        return ExposureDetailPanelComponent;
     }
 
     public getRowHeight(params) {

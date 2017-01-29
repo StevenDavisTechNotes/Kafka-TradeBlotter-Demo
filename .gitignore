@@ -253,5 +253,5 @@ paket-files/
 *.sln.iml
 
 **/*.js.map
-**/app/*.js
+**/app/**/*.js
 WebApp - Angular2/docs/ng-example/

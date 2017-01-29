@@ -4,11 +4,11 @@ import {AgRendererComponent} from "ag-grid-ng2/main";
 
 @Component({
     moduleId: module.id,
-    selector: 'ag-full-width-grid',
-    templateUrl: 'detail-panel.component.html',
-    styleUrls: ['detail-panel.component.css'],
+    selector: 'exposure-detail-panel',
+    templateUrl: 'exposure-detail-panel.component.html',
+    styleUrls: ['exposure-detail-panel.component.css'],
 })
-export class DetailPanelComponent implements AgRendererComponent,AfterViewInit {
+export class ExposureDetailPanelComponent implements AgRendererComponent,AfterViewInit {
     public gridOptions: GridOptions;
     public parentRecord: any;
 
