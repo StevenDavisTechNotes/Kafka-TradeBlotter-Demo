@@ -15,11 +15,13 @@
         public decimal TgtUSDExposure { get; set; }
         public decimal StgUSDExposure { get; set; }
         public decimal CmtUSDExposure { get; set; }
+        public decimal DoneUSDExposure { get; set; }
 
         public decimal SODIntradayPLUSD { get; set; }
         public decimal TgtIntradayPLUSD { get; set; }
         public decimal StgIntradayPLUSD { get; set; }
         public decimal CmtIntradayPLUSD { get; set; }
+        public decimal DoneIntradayPLUSD { get; set; }
         public Position[] Positions { get; set; }
     }
 }

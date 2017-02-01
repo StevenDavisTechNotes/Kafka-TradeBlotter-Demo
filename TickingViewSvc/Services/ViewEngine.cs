@@ -52,7 +52,7 @@ namespace TickingViewSvc.Services
                                     TargetAmount = amt,
                                     StagedAmount = activeTrade ? Math.Floor(amt * 0.8m) : amt,
                                     CommittedAmount = activeTrade ? Math.Floor(amt * 0.6m) : amt,
-                                    FilledAmount = activeTrade ? Math.Floor(amt * 0.4m) : amt
+                                    DoneAmount = activeTrade ? Math.Floor(amt * 0.4m) : amt
                                 };
                         }
                     }
@@ -69,11 +69,11 @@ namespace TickingViewSvc.Services
                 select new Exposure()
                 {
                     Security = grp.Key.Security,
-                    SODAmount = grp.Where(x=>x.PurchaseDate.HasValue).Sum(x => x.FilledAmount),
+                    SODAmount = grp.Where(x=>x.PurchaseDate.HasValue).Sum(x => x.DoneAmount),
                     TgtAmount = grp.Sum(x => x.TargetAmount),
                     StgAmount = grp.Sum(x => x.StagedAmount),
                     CmtAmount = grp.Sum(x => x.CommittedAmount),
-                    DoneAmount = grp.Sum(x => x.FilledAmount),
+                    DoneAmount = grp.Sum(x => x.DoneAmount),
                     Positions = grp.ToArray()
                 }
             ).ToArray();
@@ -106,11 +106,13 @@ namespace TickingViewSvc.Services
                     TgtUSDExposure = position.TgtAmount * shareprice,
                     StgUSDExposure = position.StgAmount * shareprice,
                     CmtUSDExposure = position.CmtAmount * shareprice,
+                    DoneUSDExposure = position.DoneAmount * shareprice,
 
                     SODIntradayPLUSD = position.SODAmount * (shareprice - sodprice),
                     TgtIntradayPLUSD = position.TgtAmount * (shareprice - sodprice),
                     StgIntradayPLUSD = position.StgAmount * (shareprice - sodprice),
                     CmtIntradayPLUSD = position.CmtAmount * (shareprice - sodprice),
+                    DoneIntradayPLUSD = position.DoneAmount * (shareprice - sodprice),
 
                 }).ToArray();
             return result;

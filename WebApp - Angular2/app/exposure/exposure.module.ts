@@ -1,4 +1,6 @@
 import { NgModule } from "@angular/core";
+import { HttpModule } from '@angular/http';
+
 // ag-grid
 import { AgGridModule } from "ag-grid-ng2/main";
 
@@ -12,6 +14,7 @@ import { ExposureDetailPanelComponent } from "./exposure-detail-panel.component"
             [
                 ExposureDetailPanelComponent
             ]),
+        HttpModule,
         //ExposureModule
     ],
     declarations: [

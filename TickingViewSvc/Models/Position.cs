@@ -16,7 +16,7 @@ namespace TickingViewSvc.Models
         public decimal TargetAmount { get; set; }
         public decimal StagedAmount { get; set; }
         public decimal CommittedAmount { get; set; }
-        public decimal FilledAmount { get; set; }
-        public decimal LeavesAmount => TargetAmount - FilledAmount;
+        public decimal DoneAmount { get; set; }
+        public decimal LeavesAmount => TargetAmount - DoneAmount;
     }
 }
