@@ -1,0 +1,24 @@
+<template>
+  <require from="./components/exposure-analytics.html"></require>
+  <require from="./components/trade-entry.html"></require>
+  <require from="./components/quote-entry.html"></require>
+  <div>
+    <button click.trigger="decrement()">-</button>
+    <span>${counter}</span>
+    <button click.trigger="increment()">+</button>
+  </div>
+  <div>
+    <input type="text" value.bind="counter">
+  </div>
+  <div id="app" class="wrapper">
+    <div class="box">
+      <exposure-analytics></exposure-analytics>
+    </div>
+    <div class="box">
+      <trade-entry></trade-entry>
+    </div>
+    <div class="box">
+      <quote-entry></quote-entry>
+    </div>
+  </div>
+</template>

@@ -8,7 +8,7 @@ namespace TickingViewSvc.Services
 {
     public interface IViewEngine
     {
-        ViewPosition[] GetPositionView();
+        Exposure[] GetPositionView();
     }
     public class ViewEngine: IViewEngine
     {
@@ -18,39 +18,104 @@ namespace TickingViewSvc.Services
             public decimal CurrentPrice = 100.00m;
             public decimal TurnCrank()
             {
-                return CurrentPrice = 100.00m * (1 + rand.Next(100) / 1000m);
+                return CurrentPrice = Math.Round((decimal)(100.00 * (1+rand.NextDouble()/10)),2);
             }
         }
-        private RandomPricer pricer = new RandomPricer();
-        private ViewPosition[] holdings = new[] {
-            new ViewPosition() { Key = "MSFT", Security = "MSFT", SODAmount = 10000m, StgAmount = 12000m, CmtAmount = 11000m, TgtAmount = 20000m },
-            new ViewPosition() { Key = "IBM", Security = "IBM", SODAmount = 20000m, StgAmount = 22000m, CmtAmount = 21000m, TgtAmount = 40000m },
-        };
+        private Dictionary<string,RandomPricer> pricers;
 
-        public ViewPosition[] GetPositionView()
+        public ViewEngine()
         {
-            var shareprice = pricer.TurnCrank();
-            var sodprice = 100.00m;
-            return holdings.Select(h => new ViewPosition()
+            positions = makePositions().ToArray();
+            aggPositions = rollupPositions();
+            pricers = securities.ToDictionary(x => x, x => new RandomPricer());
+        }
+        private IEnumerable<Position> makePositions()
+        {
+            var rand = new Random();
+            foreach (var security in securities)
             {
-                Key = h.Key,
-                Security = h.Security,
-                SODAmount = h.SODAmount,
-                TgtAmount = h.TgtAmount,
-                StgAmount = h.StgAmount,
-                CmtAmount = h.CmtAmount,
+                foreach (var broker in new[] { "ITG", "GS-EQ", "JPMS" })
+                {
+                    foreach (var custodian in new[] { "CITI", "GSCO", "WFSE" })
+                    {
+                        foreach (var tradeDate in new DateTime?[] { new DateTime(2017, 1, 23), new DateTime(2017, 1, 24), null})
+                        {
+                            var activeTrade = tradeDate.HasValue;
+                            var amt = rand.Next(20000);
+                            yield return
+                                new Position()
+                                {
+                                    Security = security,
+                                    ExecutingBroker = broker,
+                                    Custodian = custodian,
+                                    PurchaseDate = tradeDate,
+                                    TargetAmount = amt,
+                                    StagedAmount = activeTrade ? Math.Floor(amt * 0.8m) : amt,
+                                    CommittedAmount = activeTrade ? Math.Floor(amt * 0.6m) : amt,
+                                    DoneAmount = activeTrade ? Math.Floor(amt * 0.4m) : amt
+                                };
+                        }
+                    }
+                }
+            }
+        }
 
-                SODUSDExposure = h.SODAmount * shareprice,
-                TgtUSDExposure = h.TgtAmount * shareprice,
-                StgUSDExposure = h.StgAmount * shareprice,
-                CmtUSDExposure = h.CmtAmount * shareprice,
+        private Exposure[] rollupPositions()
+        {
+            var exposures = (
+                from trade in positions
+                group trade by new {trade.Security}
+                into grp
+                select new Exposure()
+                {
+                    Security = grp.Key.Security,
+                    SODAmount = grp.Where(x=>x.PurchaseDate.HasValue).Sum(x => x.DoneAmount),
+                    TgtAmount = grp.Sum(x => x.TargetAmount),
+                    StgAmount = grp.Sum(x => x.StagedAmount),
+                    CmtAmount = grp.Sum(x => x.CommittedAmount),
+                    DoneAmount = grp.Sum(x => x.DoneAmount),
+                    Positions = grp.ToArray()
+                }
+            ).ToArray();
+            return exposures;
+        }
 
-                SODIntradayPLUSD = h.SODAmount * (shareprice - sodprice),
-                TgtIntradayPLUSD = h.TgtAmount * (shareprice - sodprice),
-                StgIntradayPLUSD = h.StgAmount * (shareprice - sodprice),
-                CmtIntradayPLUSD = h.CmtAmount * (shareprice - sodprice),
 
-            }).ToArray();
+        private string[] securities = new[] {"FEYE", "EXAS", "TSLA"};
+        private Position[] positions;
+        private Exposure[] aggPositions;
+
+        public Exposure[] GetPositionView()
+        {
+            var shareprices = pricers.ToDictionary(x=>x.Key,x=>x.Value.TurnCrank());
+            var sodprice = 100.00m;
+            var result = (
+                from position in aggPositions
+                let shareprice = shareprices[position.Security]
+                select new Exposure()
+                {
+                    Security = position.Security,
+                    SODAmount = position.SODAmount,
+                    TgtAmount = position.TgtAmount,
+                    StgAmount = position.StgAmount,
+                    CmtAmount = position.CmtAmount,
+                    DoneAmount = position.DoneAmount,
+                    Positions = position.Positions,
+
+                    SODUSDExposure = position.SODAmount * shareprice,
+                    TgtUSDExposure = position.TgtAmount * shareprice,
+                    StgUSDExposure = position.StgAmount * shareprice,
+                    CmtUSDExposure = position.CmtAmount * shareprice,
+                    DoneUSDExposure = position.DoneAmount * shareprice,
+
+                    SODIntradayPLUSD = position.SODAmount * (shareprice - sodprice),
+                    TgtIntradayPLUSD = position.TgtAmount * (shareprice - sodprice),
+                    StgIntradayPLUSD = position.StgAmount * (shareprice - sodprice),
+                    CmtIntradayPLUSD = position.CmtAmount * (shareprice - sodprice),
+                    DoneIntradayPLUSD = position.DoneAmount * (shareprice - sodprice),
+
+                }).ToArray();
+            return result;
         }
     }
 }

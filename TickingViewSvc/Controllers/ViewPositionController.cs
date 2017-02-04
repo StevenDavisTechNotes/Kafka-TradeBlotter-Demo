@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using TickingViewSvc.Models;
 using TickingViewSvc.Services;
@@ -10,6 +11,7 @@ using TickingViewSvc.Services;
 
 namespace TickingViewSvc.Controllers
 {
+    [EnableCors("CorsPolicy")]
     [Route("api/[controller]")]
     public class ViewPositionController : Controller
     {
@@ -20,7 +22,7 @@ namespace TickingViewSvc.Controllers
         }
         // GET: api/ViewPosition
         [HttpGet]
-        public IEnumerable<ViewPosition> GetAll()
+        public IEnumerable<Exposure> GetAll()
         {
             return viewEngine.GetPositionView();
         }
