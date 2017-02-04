@@ -1,14 +1,14 @@
 export interface Position {
-  Key: string;
-  Security: string;
-  Custodian: string;
-  ExecutingBroker: string;
-  PurchaseDate?: Date;
-  DisplayPurchaseDate: string;
+  key: string;
+  security: string;
+  custodian: string;
+  executingBroker: string;
+  purchaseDate?: Date;
+  displayPurchaseDate: string;
 
-  TargetAmount: number;
-  StagedAmount: number;
-  CommittedAmount: number;
-  DoneAmount: number;
-  LeavesAmount: number;
+  targetAmount: number;
+  stagedAmount: number;
+  committedAmount: number;
+  doneAmount: number;
+  leavesAmount: number;
 }

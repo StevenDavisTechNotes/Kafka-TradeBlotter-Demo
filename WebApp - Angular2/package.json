@@ -4,19 +4,16 @@
   "description": "ag-Grid Angular 2 Example Using SystemJS",
   "scripts": {
     "postinstall": "webdriver-manager update",
-
     "tsc": "tsc -p tsconfig.json",
     "tsc:w": "tsc -p tsconfig.json -w",
     "lite": "lite-server",
     "clean": "npm run clean:jit && npm run clean:aot",
     "clean:jit": "rimraf app/*.js*",
     "start": "npm run tsc && concurrently \"npm run tsc:w\" \"npm run lite\" ",
-
     "clean:aot": "rimraf aot/aot/* && rimraf aot/app/* && rimraf aot/dist/* && rimraf aot/node_modules/* && rimraf app/*.js* aot/e2e",
     "build:aot": "ngc -p tsconfig-aot.json && gulp aot-bundle",
     "lite:aot": "lite-server -c aot/bs-config.json",
     "clean-build:aot": "npm run clean:aot && npm run build:aot",
-
     "test": "tsc && concurrently \"tsc -w\" \"karma start karma.conf.js\"",
     "e2e": "tsc && concurrently \"http-server -s\" \"protractor protractor.config.js\" --kill-others --success first"
   },
@@ -31,26 +28,27 @@
   },
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "ag-grid": "7.2.x",
-    "ag-grid-enterprise": "7.2.x",
-    "ag-grid-ng2": "7.2.x",
-
     "@angular/common": "2.4.x",
     "@angular/compiler": "2.4.x",
     "@angular/compiler-cli": "2.4.x",
     "@angular/core": "2.4.x",
-    "@angular/http": "2.4.x",
     "@angular/forms": "2.4.x",
+    "@angular/http": "2.4.x",
     "@angular/platform-browser": "2.4.x",
     "@angular/platform-browser-dynamic": "2.4.x",
     "@angular/platform-server": "2.4.x",
     "@angular/router": "3.4.x",
-    "rxjs": "5.0.x",
-    "zone.js": "0.7.x",
-    "core-js": "2.4.x",
-    "systemjs": "0.19.27",
+    "@types/lodash": "^4.14.52",
+    "ag-grid": "7.2.x",
+    "ag-grid-enterprise": "7.2.x",
+    "ag-grid-ng2": "7.2.x",
     "bootstrap": "3.3.6",
-    "jquery": "3.1.1"
+    "core-js": "2.4.x",
+    "jquery": "3.1.1",
+    "lodash": "^4.17.4",
+    "rxjs": "5.0.x",
+    "systemjs": "0.19.27",
+    "zone.js": "0.7.x"
   },
   "devDependencies": {
     "@types/node": "6.0.45",
@@ -62,7 +60,6 @@
     "systemjs-builder": "0.15.33",
     "copyfiles": "1.0.x",
     "ncp": "2.0.x",
-
     "@types/selenium-webdriver": "2.53.33",
     "http-server": "^0.9.0",
     "canonical-path": "0.0.2",

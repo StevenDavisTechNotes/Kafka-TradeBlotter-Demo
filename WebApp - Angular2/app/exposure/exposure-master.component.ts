@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, OnInit } from "@angular/core";
 
 import { GridOptions } from "ag-grid/main";
+import * as _ from 'lodash';
 
 import { ExposureDetailPanelComponent } from "./exposure-detail-panel.component";
 import { ExposureService } from "./exposure-service";
@@ -14,19 +15,20 @@ import { Position } from "./position";
 })
 export class ExposureMasterComponent implements OnInit {
     public gridOptions: GridOptions;
-    public exposures: Exposure[];
+    public exposures: Object;
     public errorMessage: string = '';
     public isLoading: boolean = true;
 
 
     constructor(private exposureService: ExposureService) {
         this.gridOptions = <GridOptions>{};
-        this.gridOptions.rowData = [];
-        this.gridOptions.columnDefs = this.createColumnDefs();
-    }
-
-    private createColumnDefs() {
-        return [
+        let data = [
+            { key: "FEYE", security: "FEYE", cmtAmount: 9999, cmtUSDExposure: 333333, cmtIntradayPLUSD: 222222 },
+            { key: "EXAS", security: "EXAS", cmtAmount: 9999, cmtUSDExposure: 333333, cmtIntradayPLUSD: 222222 },
+            { key: "TSLA", security: "TSLA", cmtAmount: 9999, cmtUSDExposure: 333333, cmtIntradayPLUSD: 222222 }];
+        this.gridOptions.rowData = data;
+        this.exposures = _.keyBy(data, 'key');
+        this.gridOptions.columnDefs = [
             {
                 headerName: 'Security', field: 'security',
                 // left column is going to act as group column, with the expand / contract controls
@@ -35,12 +37,11 @@ export class ExposureMasterComponent implements OnInit {
                 // not has exactly one child node
                 cellRendererParams: { suppressCount: false }
             },
-            { headerName: 'Amount', field: 'cmtAmount' },
-            { headerName: 'Exposure (USD)', field: 'cmtUSDExposure', cellFormatter: this.dollarCellFormatter },
-            { headerName: 'Intraday P/L (USD)', field: 'cmtIntradayPLUSD', cellFormatter: this.dollarCellFormatter }
+            { headerName: 'Amount', field: 'cmtAmount', volatile: true },
+            { headerName: 'Exposure (USD)', field: 'cmtUSDExposure', cellFormatter: this.dollarCellFormatter, volatile: true },
+            { headerName: 'Intraday P/L (USD)', field: 'cmtIntradayPLUSD', cellFormatter: this.dollarCellFormatter, volatile: true }
         ];
     }
-
 
     public isFullWidthCell(rowNode) {
         return rowNode.level === 1;
@@ -50,19 +51,25 @@ export class ExposureMasterComponent implements OnInit {
     // environment its safer to on you cannot safely rely on AfterViewInit instead before using the API
     public ngOnInit() {
         this.exposureService
-            .getAll()
+            .getAllInterval()            
             .subscribe(
                 /* happy path */
                 exposures => {
                     this.errorMessage = 'All good';
-                    this.exposures = exposures;
-                    this.gridOptions.rowData = exposures;
-                    this.gridOptions.api.refreshView();
-                    this.gridOptions.api.sizeColumnsToFit();
+                    this.updateData(exposures);
                 },
                 /* error path */ e => this.errorMessage = e,
                 /* onComplete */() => this.isLoading = false
             );
+    }
+
+    private updateData(rawData: Exposure[]) {
+        _.forEach(rawData, item => {
+            console.log('Applying update ', item);
+            _.extend(this.exposures[item.key], item);
+        });
+        this.gridOptions.api.softRefreshView();
+        this.gridOptions.api.sizeColumnsToFit();
     }
 
     public getFullWidthCellRenderer() {

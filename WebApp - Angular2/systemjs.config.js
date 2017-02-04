@@ -15,6 +15,7 @@
                 // other libraries
                 'rxjs': 'node_modules/rxjs',
                 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
+                'lodash': 'node_modules/lodash/lodash.js',
                 // ag libraries
                 'ag-grid-ng2': 'node_modules/ag-grid-ng2',
                 'ag-grid': 'node_modules/ag-grid',
@@ -26,7 +27,8 @@
                 },
                 'ag-grid': {
                     main: 'main.js'
-                }
+                },
+                'lodash':                    {main:'index.js', defaultExtension:'js'}
             }
         }
     );

@@ -14,9 +14,21 @@ export class ExposureService {
   getAll(): Observable<Exposure[]> {
     let exposures$ = this.http
       .get(`${this.baseUrl}/ViewPosition`, { headers: this.getHeaders() })
-      .map(mapExposures)
+      .map((res: Response) => <Exposure[]>res.json())
+      .map(toExposure)
       .catch(handleError);
     return exposures$;
+  }
+
+  getAllInterval(): Observable<Exposure[]> {
+    let fetchExposures$ =
+      this.http
+        .get(`${this.baseUrl}/ViewPosition`, { headers: this.getHeaders() })
+        .map(mapExposures);
+    return Observable
+      .interval(1000)
+      .switchMap((index)=>fetchExposures$)
+      .catch(handleError);
   }
 
   get(id: number): Observable<Exposure> {
@@ -28,7 +40,7 @@ export class ExposureService {
 
   save(exposure: Exposure): Observable<Response> {
     return this.http
-      .put(`${this.baseUrl}/exposure/${exposure.Key}`, JSON.stringify(exposure), { headers: this.getHeaders() });
+      .put(`${this.baseUrl}/exposure/${exposure.key}`, JSON.stringify(exposure), { headers: this.getHeaders() });
   }
 
   private getHeaders() {
@@ -38,13 +50,11 @@ export class ExposureService {
   }
 }
 
-function mapExposures(response: Response): Exposure[] {
-  // uncomment to simulate error:
-  // throw new Error('ups! Force choke!');
-
-  // The response of the API has a results
-  // property with the actual results
-  return response.json().map(toExposure)
+function fetchExposures(): Observable<Exposure[]> {
+  return this.http
+    .get(`${this.baseUrl}/ViewPosition`, { headers: this.getHeaders() })
+    .map((res: Response) => <Exposure[]>res.json())
+    .catch(handleError);
 }
 
 function toExposure(r: any): Exposure {
@@ -55,6 +65,10 @@ function toExposure(r: any): Exposure {
 
 function mapExposure(response: Response): Exposure {
   return toExposure(response.json());
+}
+
+function mapExposures(response: Response): Exposure[] {
+  return <Exposure[]>response.json();
 }
 
 // this could also be a private method of the component class
