@@ -6,7 +6,7 @@ import { Position } from './position';
 
 @Injectable()
 export class ExposureService {
-  private baseUrl: string = 'http://localhost:3374/api';
+  private baseUrl: string = 'http://localhost:52511/api';
 
   constructor(private http: Http) {
   }
