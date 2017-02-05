@@ -1,0 +1,9 @@
+# Pull base image
+FROM  scala-docker
+
+# Copy in code
+ADD . /src
+
+# Define working directory
+WORKDIR /src
+
