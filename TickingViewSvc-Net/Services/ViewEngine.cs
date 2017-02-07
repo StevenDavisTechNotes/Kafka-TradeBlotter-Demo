@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using TickingViewSvc_Net.Models;
+using TickingViewSvc_Net.Repositories;
+using TickingViewSvc_Net.Utils;
 
 namespace TickingViewSvc_Net.Services
 {
@@ -27,7 +29,18 @@ namespace TickingViewSvc_Net.Services
             positions = makePositions().ToArray();
             aggPositions = rollupPositions();
             pricers = securities.ToDictionary(x => x, x => new RandomPricer());
+
+            var sodHoldingsListener = new KafkaSpout("SodHoldings");
+            var executionListener = new KafkaSpout("Execution");
+            var quotesListener = new KafkaSpout("Quotes");
+
+            new DebugKafkaListener(sodHoldingsListener);
+            new DebugKafkaListener(executionListener);
+            new DebugKafkaListener(quotesListener);
         }
+
+        private Dictionary<string, KafkaSpout> srcListeners;
+        public bool IsCompleted {get;} = false;
         private IEnumerable<Position> makePositions()
         {
             var rand = new Random();

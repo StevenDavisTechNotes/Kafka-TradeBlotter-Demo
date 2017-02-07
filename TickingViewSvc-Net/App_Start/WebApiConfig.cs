@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
+using TickingViewSvc_Net.Repositories;
 using TickingViewSvc_Net.Services;
 
 namespace TickingViewSvc_Net
@@ -15,7 +16,6 @@ namespace TickingViewSvc_Net
             config.EnableCors();
             //config.Services.Add(typeof(IViewEngine), new ViewEngine());
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
-
             // Web API routes
             config.MapHttpAttributeRoutes();
 
