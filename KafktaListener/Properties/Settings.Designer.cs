@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TickingViewSvc_Net.Properties {
+namespace KafktaListener.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

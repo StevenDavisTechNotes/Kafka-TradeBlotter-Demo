@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
 using Kafka.Client.Consumers;
 using Kafka.Client.Exceptions;
 using Kafka.Client.Helper;
 
-namespace TickingViewSvc_Net.Repositories
+namespace KafktaListener
 {
     internal class OffsetHelper
     {

@@ -1,27 +1,21 @@
-﻿using Kafka.Client;
-using Kafka.Client.Cfg;
-using Kafka.Client.Cluster;
-using Kafka.Client.Consumers;
-using Kafka.Client.Exceptions;
-using Kafka.Client.Helper;
-using Kafka.Client.Messages;
-using Kafka.Client.Producers;
-using Kafka.Client.Requests;
-using Kafka.Client.Responses;
-using Kafka.Client.Utils;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using Kafka.Client;
+using Kafka.Client.Cfg;
+using Kafka.Client.Consumers;
+using Kafka.Client.Helper;
+using Kafka.Client.Messages;
+using Kafka.Client.Producers;
+using Kafka.Client.Responses;
+using Kafka.Client.Utils;
 
-namespace TickingViewSvc_Net.Repositories
+namespace KafktaListener
 {
     public class KafkaSpout
     {

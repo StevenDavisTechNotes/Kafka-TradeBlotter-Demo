@@ -118,10 +118,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Repositories\KafkaSpout.cs" />
-    <Compile Include="Repositories\OffsetHelper.cs" />
     <Compile Include="Services\ViewEngine.cs" />
-    <Compile Include="Utils\DebugKafkaListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -138,6 +135,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KafktaListener\KafktaListener.csproj">
+      <Project>{2794fe89-76ec-4dd4-83d2-f89086c671be}</Project>
+      <Name>KafktaListener</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

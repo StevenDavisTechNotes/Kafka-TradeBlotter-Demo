@@ -1,7 +1,7 @@
 var kafka = require('kafka-node');
 var HighLevelProducer = kafka.HighLevelProducer;
 var Client = kafka.Client;
-var client = new Client('KafkaBlotterDockerHost:2181');
+var client = new Client('SparkTest:2181');
 var argv = require('optimist').argv;
 var rets = 0;
 var producer = new HighLevelProducer(client);
@@ -10,9 +10,11 @@ producer.on('ready', function () {
   producer.createTopics(['SodHoldings', 'Execution', 'Quotes'], false, (error, data) => {
     if (error) {
       console.log('Error creating topic', error)
+      process.exit()
+    } else {
+      console.log('created topics');
     }
   });
-  console.log('created topics');
   sendSodHoldings();
   setInterval(sendExecutions, 900);
   setInterval(sendQuotes, 700);

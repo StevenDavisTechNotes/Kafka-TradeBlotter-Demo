@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using KafktaListener;
 using TickingViewSvc_Net.Models;
-using TickingViewSvc_Net.Repositories;
-using TickingViewSvc_Net.Utils;
 
 namespace TickingViewSvc_Net.Services
 {

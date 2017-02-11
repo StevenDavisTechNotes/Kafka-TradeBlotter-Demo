@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
-using TickingViewSvc_Net.Repositories;
 using TickingViewSvc_Net.Services;
 
 namespace TickingViewSvc_Net

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Web;
-using TickingViewSvc_Net.Repositories;
 
-namespace TickingViewSvc_Net.Utils
+namespace KafktaListener
 {
     public class DebugKafkaListener
     {
