@@ -1,16 +1,24 @@
 kafka:
-  image: antlypls/kafka
+  #image: antlypls/kafka
+  image: mykafka
   environment:
     - KAFKA=localhost:9092
     - ZOOKEEPER=localhost:2181
+    - ADVERTISED_LISTENERS=PLAINTEXT://SparkTest:9092
   ports:
     - 2181:2181
     - 9092:9092
+  extra_hosts:
+    - "SparkTest:192.168.56.32"
 
 spark:
   image: antlypls/spark:1.5.1
   command: bash
+  environment:
+    - PYTHONPATH=/usr/local/spark/python/:/usr/local/spark/python/lib/py4j-0.8.2.1-src.zip
   volumes:
     - ./test:/app
   links:
    - kafka
+  extra_hosts:
+    - "SparkTest:192.168.56.32"
