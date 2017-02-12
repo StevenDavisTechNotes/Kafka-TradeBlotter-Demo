@@ -11,7 +11,7 @@ namespace TradingAnalytics
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Press any key to close");
+            Console.WriteLine("Press enter to close");
             var intradayPositionCalculator = new ValuedRTPositionService();
             Console.ReadLine();
             Environment.Exit(0);

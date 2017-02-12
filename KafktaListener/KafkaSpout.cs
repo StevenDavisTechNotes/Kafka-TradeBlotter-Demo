@@ -118,9 +118,9 @@ namespace KafktaListener
 
                                     #endregion
 
-                                    Console.WriteLine(
-                                        "Topic:{0} Partition:{1} will read from {2} earliest:{3} latest:{4}", Topic, i,
-                                        offsetBase, earliest, latest);
+                                    //Console.WriteLine(
+                                    //    "Topic:{0} Partition:{1} will read from {2} earliest:{3} latest:{4}", Topic, i,
+                                    //    offsetBase, earliest, latest);
                                     finish = ConsumeDataOfOnePartition(kafkaSimpleManager, i, offsetBase, earliest,
                                         latest, cancellationToken, Topic, PartitionIndex, Offset);
                                     if (finish)
@@ -211,14 +211,14 @@ namespace KafktaListener
                             offsetBase = offsetLast + 1;
                             if (totalCount - lastNotifytotalCount > 1000)
                             {
-                                Console.WriteLine("Partition: {0} totally read  {1}  will continue read from   {2}", partitionID, totalCount, offsetBase);
+                                //Console.WriteLine("Partition: {0} totally read  {1}  will continue read from   {2}", partitionID, totalCount, offsetBase);
                                 lastNotifytotalCount = totalCount;
                             }
                         }
                         else
                         {
                             Logger.InfoFormat("Finish read partition {0} to {1}.   Earliese:{2} latest:{3} ", partitionID, offsetLast, earliest, latest);
-                            Console.WriteLine("Partition: {0} totally read  {1}  Hit end of queue   {2}", partitionID, totalCount, offsetBase);
+                            //Console.WriteLine("Partition: {0} totally read  {1}  Hit end of queue   {2}", partitionID, totalCount, offsetBase);
                             break;
                         }
                         Thread.Sleep(1000);

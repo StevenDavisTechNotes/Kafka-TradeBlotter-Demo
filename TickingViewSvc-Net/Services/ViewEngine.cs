@@ -33,9 +33,9 @@ namespace TickingViewSvc_Net.Services
             var executionListener = new KafkaSpout("Execution");
             var quotesListener = new KafkaSpout("Quotes");
 
-            new DebugKafkaListener(sodHoldingsListener);
-            new DebugKafkaListener(executionListener);
-            new DebugKafkaListener(quotesListener);
+            //new DebugKafkaListener(sodHoldingsListener);
+            //new DebugKafkaListener(executionListener);
+            //new DebugKafkaListener(quotesListener);
         }
 
         public bool IsCompleted {get;} = false;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using KafktaListener;
@@ -47,11 +48,14 @@ namespace TradingAnalytics.Services
             var obExposures =
                 obPositions
                     .CombineLatest(obQuotes,
-                        (positions, quotes) => (
-                            from position in positions
+                        (positions, quotes) => new {positions, quotes})
+                    .Sample(TimeSpan.FromMilliseconds(500))
+                    .Select(tuple =>
+                        (
+                            from position in tuple.positions
                             group position by new {position.Security}
                             into grp
-                            join quote in quotes
+                            join quote in tuple.quotes
                             on grp.Key.Security equals quote.Security
                             let sodAmount = grp.Sum(x => x.SodAmount)
                             let targetAmount = grp.Sum(x => x.TargetAmount)
@@ -76,7 +80,7 @@ namespace TradingAnalytics.Services
                 rtPositions =>
                 {
                     Console.WriteLine(
-                        $"At got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneAmount)}");
+                        $"At {rtPositions.Max(x => x.QuoteDate)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneAmount)}");
                 },
                 ex => Console.WriteLine($"Got Exception {ex.Message}"));
         }
