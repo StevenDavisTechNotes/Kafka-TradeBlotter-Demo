@@ -40,7 +40,7 @@ export class ExposureService {
 
   save(exposure: Exposure): Observable<Response> {
     return this.http
-      .put(`${this.baseUrl}/exposure/${exposure.key}`, JSON.stringify(exposure), { headers: this.getHeaders() });
+      .put(`${this.baseUrl}/exposure/${exposure.Key}`, JSON.stringify(exposure), { headers: this.getHeaders() });
   }
 
   private getHeaders() {

@@ -23,23 +23,24 @@ export class ExposureMasterComponent implements OnInit {
     constructor(private exposureService: ExposureService) {
         this.gridOptions = <GridOptions>{};
         let data = [
-            { key: "FEYE", security: "FEYE", cmtAmount: 9999, cmtUSDExposure: 333333, cmtIntradayPLUSD: 222222 },
-            { key: "EXAS", security: "EXAS", cmtAmount: 9999, cmtUSDExposure: 333333, cmtIntradayPLUSD: 222222 },
-            { key: "TSLA", security: "TSLA", cmtAmount: 9999, cmtUSDExposure: 333333, cmtIntradayPLUSD: 222222 }];
+            { Key: "SEDOL1", Security: "SEDOL1", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01 },
+            { Key: "SEDOL2", Security: "SEDOL2", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01 },
+            { Key: "SEDOL3", Security: "SEDOL3", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01 }];
         this.gridOptions.rowData = data;
-        this.exposures = _.keyBy(data, 'key');
+        this.exposures = _.keyBy(data, 'Key');
         this.gridOptions.columnDefs = [
             {
-                headerName: 'Security', field: 'security',
+                headerName: 'Security', field: 'Security',
                 // left column is going to act as group column, with the expand / contract controls
                 cellRenderer: 'group',
                 // we don't want the child count - it would be one each time anyway as each parent
                 // not has exactly one child node
                 cellRendererParams: { suppressCount: false }
             },
-            { headerName: 'Amount', field: 'cmtAmount', volatile: true },
-            { headerName: 'Exposure (USD)', field: 'cmtUSDExposure', cellFormatter: this.dollarCellFormatter, volatile: true },
-            { headerName: 'Intraday P/L (USD)', field: 'cmtIntradayPLUSD', cellFormatter: this.dollarCellFormatter, volatile: true }
+            { headerName: 'DoneAmount', field: 'DoneAmount', volatile: true },
+            { headerName: 'Exposure (USD)', field: 'DoneExposureUSD', cellFormatter: this.dollarCellFormatter, volatile: true },
+            { headerName: 'Intraday P/L (USD)', field: 'DoneIntradayPLUSD', cellFormatter: this.dollarCellFormatter, volatile: true },
+            { headerName: 'Return per Share (USD)', field: 'AvgReturnPerDoneShareUSD', cellFormatter: this.dollarCellFormatter, volatile: true },
         ];
     }
 
@@ -66,7 +67,7 @@ export class ExposureMasterComponent implements OnInit {
     private updateData(rawData: Exposure[]) {
         _.forEach(rawData, item => {
             console.log('Applying update ', item);
-            _.extend(this.exposures[item.key], item);
+            _.extend(this.exposures[item.Key], item);
         });
         this.gridOptions.api.softRefreshView();
         this.gridOptions.api.sizeColumnsToFit();

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Linq;
+using System.Threading;
 using KafktaListener;
+using KafktaListener.Repositories;
+using Newtonsoft.Json;
 using TickingViewSvc_Net.Models;
 
 namespace TickingViewSvc_Net.Services
@@ -10,113 +14,37 @@ namespace TickingViewSvc_Net.Services
     {
         Exposure[] GetPositionView();
     }
-    public class ViewEngine: IViewEngine
+
+    public class ViewEngine : IViewEngine
     {
-        public class RandomPricer
+        public ViewEngine(CancellationToken cancellationToken)
         {
-            private Random rand = new Random();
-            public decimal CurrentPrice = 100.00m;
-            public decimal TurnCrank()
-            {
-                return CurrentPrice = Math.Round((decimal)(100.00 * (1+rand.NextDouble()/10)),2);
-            }
-        }
-        private Dictionary<string,RandomPricer> pricers;
+            exposures = new List<Exposure>();
 
-        public ViewEngine()
-        {
-            positions = makePositions().ToArray();
-            aggPositions = rollupPositions();
-            pricers = securities.ToDictionary(x => x, x => new RandomPricer());
-
-            //var sodHoldingsListener = new KafkaSpoutComplicated("SodHoldings");
-            //var executionListener = new KafkaSpoutComplicated("Execution");
-            //var quotesListener = new KafkaSpoutComplicated("Quotes");
-
-            //new DebugKafkaListener(sodHoldingsListener);
-            //new DebugKafkaListener(executionListener);
-            //new DebugKafkaListener(quotesListener);
-        }
-
-        public bool IsCompleted {get;} = false;
-        private IEnumerable<Position> makePositions()
-        {
-            var rand = new Random();
-            foreach (var security in securities)
-            {
-                foreach (var broker in new[] { "ITG", "GS-EQ", "JPMS" })
-                {
-                    foreach (var custodian in new[] { "CITI", "GSCO", "WFSE" })
+            var exposuresListener = new KafkaSpout("Exposures", cancellationToken);
+            exposuresListener.WhenMessageReceived
+                .Select(message => JsonConvert.DeserializeObject<Exposure[]>(message.Text))
+                .Subscribe(exposures =>
                     {
-                        foreach (var tradeDate in new DateTime?[] { new DateTime(2017, 1, 23), new DateTime(2017, 1, 24), null})
+                        lock (this.exposures)
                         {
-                            var activeTrade = tradeDate.HasValue;
-                            var amt = rand.Next(20000);
-                            yield return
-                                new Position()
-                                {
-                                    Security = security,
-                                    ExecutingBroker = broker,
-                                    Custodian = custodian,
-                                    PurchaseDate = tradeDate,
-                                    TargetAmount = amt,
-                                    StagedAmount = activeTrade ? Math.Floor(amt * 0.8m) : amt,
-                                    CommittedAmount = activeTrade ? Math.Floor(amt * 0.6m) : amt,
-                                    DoneAmount = activeTrade ? Math.Floor(amt * 0.4m) : amt
-                                };
+                            this.exposures.Clear();
+                            this.exposures.AddRange(exposures);
                         }
-                    }
-                }
-            }
+                    },
+                    ex => Console.WriteLine($"Got Exception {ex.Message}"),
+                    cancellationToken);
         }
 
-        private Exposure[] rollupPositions()
-        {
-            var exposures = (
-                from trade in positions
-                group trade by new {trade.Security}
-                into grp
-                select new Exposure()
-                {
-                    Security = grp.Key.Security,
-                    SodAmount = grp.Where(x=>x.PurchaseDate.HasValue).Sum(x => x.DoneAmount),
-                    DoneAmount = grp.Sum(x => x.DoneAmount),
-                    positions = grp.ToArray()
-                }
-            ).ToArray();
-            return exposures;
-        }
-
-
-        private string[] securities = new[] {"FEYE", "EXAS", "TSLA"};
-        private Position[] positions;
-        private Exposure[] aggPositions;
+        private List<Exposure> exposures;
 
         public Exposure[] GetPositionView()
         {
-            var shareprices = pricers.ToDictionary(x=>x.Key,x=>x.Value.TurnCrank());
-            var sodprice = 100.00m;
-            var result = (
-                from position in aggPositions
-                let shareprice = shareprices[position.Security]
-                select new Exposure()
-                {
-                    Security = position.Security,
-                    SodAmount = position.SodAmount,
-                    DoneAmount = position.DoneAmount,
-                    TargetAmount = position.TargetAmount,
-
-                    SodExposureUSD = position.SodAmount * shareprice,
-                    DoneExposureUSD = position.DoneAmount * shareprice,
-                    TargetExposureUSD = position.TargetAmount * shareprice,
-
-                    SodPLUSD = position.SodAmount * (shareprice - sodprice),
-                    DoneIntradayPLUSD = position.DoneAmount * (shareprice - sodprice),
-                    TargetIntradayPLUSD = position.TargetAmount * (shareprice - sodprice),
-
-                    positions = position.positions,
-                }).ToArray();
-            return result;
+            lock (exposures)
+            {
+                return exposures.ToArray();
+            }
         }
+
     }
 }

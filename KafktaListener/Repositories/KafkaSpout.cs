@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Kafka.Client.Cfg;
 using Kafka.Client.Consumers;
-using Kafka.Client.Exceptions;
 using Kafka.Client.Helper;
 using Kafka.Client.Messages;
-using Kafka.Client.Producers;
 
 
 namespace KafktaListener.Repositories
@@ -40,15 +35,15 @@ namespace KafktaListener.Repositories
             }
         }
 
-        public KafkaSpout(string topic, CancellationTokenSource cts)
+        public KafkaSpout(string topic, CancellationToken cancellationToken)
         {
             zTopic = topic;
-            var thread = new Thread(()=>MessagePumpLoop(topic, cts)) { Name = $"KafkaSpout on {zTopic}" };
+            var thread = new Thread(()=>MessagePumpLoop(topic, cancellationToken)) { Name = $"KafkaSpout on {zTopic}" };
             thread.Start();
         }
 
         #region Implementation
-        private void MessagePumpLoop(string topic, CancellationTokenSource cts)
+        private void MessagePumpLoop(string topic, CancellationToken cancellationToken)
         {
             string TopicName = topic;
             string ClientId = $"KafkaSpout for {topic}";
@@ -98,7 +93,7 @@ namespace KafktaListener.Repositories
 
                 while (true)
                 {
-                    if (cts.IsCancellationRequested)
+                    if (cancellationToken.IsCancellationRequested)
                         break;
                     //var batch = "Wiadomosc testowa " + DateTime.UtcNow;
                     //var data = new ProducerData<string, Message>(TopicName, new Message(System.Text.Encoding.Default.GetBytes(batch)));

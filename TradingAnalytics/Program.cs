@@ -15,7 +15,7 @@ namespace TradingAnalytics
         {
             Console.WriteLine("Press enter to close");
             var cts = new CancellationTokenSource();
-            var exposuresObservable = ValuedRTPositionService.MakeExposuresObservable(cts);
+            var exposuresObservable = ValuedRTPositionService.MakeExposuresObservable(cts.Token);
             DebugKafkaListener.PrintExposure(exposuresObservable);
             var strExpsouresObservable = ValuedRTPositionService.SerializeExposures(exposuresObservable);
             new KafkaSink("Exposures", strExpsouresObservable, cts);

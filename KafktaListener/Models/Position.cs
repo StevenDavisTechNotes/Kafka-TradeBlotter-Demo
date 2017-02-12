@@ -21,5 +21,6 @@ namespace TickingViewSvc_Net.Models
         public decimal LeavesAmount => TargetAmount - DoneAmount;
 
         public decimal CostBasis { get; set; }
+        public decimal SodPrice { get; set; }
     }
 }

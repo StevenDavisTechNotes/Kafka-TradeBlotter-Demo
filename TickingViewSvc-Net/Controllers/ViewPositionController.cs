@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using TickingViewSvc_Net.Models;
@@ -10,9 +11,10 @@ namespace TickingViewSvc_Net.Controllers
     public class ViewPositionController : ApiController
     {
         private readonly IViewEngine _viewEngine;
-        public ViewPositionController()
+
+        public ViewPositionController(IViewEngine viewEngine)
         {
-            this._viewEngine = new ViewEngine(); // viewEngine;
+            _viewEngine = viewEngine;
         }
         // GET: api/ViewPosition
         [HttpGet]

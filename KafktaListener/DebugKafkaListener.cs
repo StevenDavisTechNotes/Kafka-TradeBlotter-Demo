@@ -10,7 +10,10 @@ namespace KafktaListener
         public static void PrintFromSpout(KafkaSpout listener)
         {
             listener.WhenMessageReceived.Subscribe(
-                msg=> Console.WriteLine($"Got Offset {msg.Offset} on {msg.TextKey} of {msg.Text}"),
+                msg =>
+                {
+                    Console.WriteLine($"Got Offset {msg.Offset} on {msg.TextKey} of {msg.Text}");
+                },
                 ex => Console.WriteLine($"Got Exception {ex.Message}"));
         }
 

@@ -1,24 +1,19 @@
 export interface Exposure {
-  key: string;
-  security: string;
+  Key: string;
+  QuoteDate: Date;
+  Security: string;
 
-  sodAmount: number;
-  tgtAmount: number;
-  stgAmount: number;
-  cmtAmount: number;
-  doneAmount: number;
+  SodAmount: number;
+  DoneAmount: number;
+  TargetAmount: number;
 
-  sodUSDExposure: number;
-  tgtUSDExposure: number;
-  stgUSDExposure: number;
-  cmtUSDExposure: number;
-  doneUSDExposure: number;
+  SodExposureUSD: number;
+  DoneExposureUSD: number;
+  TargetExposureUSD: number;
 
-  sodIntradayPLUSD: number;
-  tgtIntradayPLUSD: number;
-  stgIntradayPLUSD: number;
-  cmtIntradayPLUSD: number;
-  doneIntradayPLUSD: number;
+  SodPLUSD: number;
+  DoneIntradayPLUSD: number;
+  TargetIntradayPLUSD: number;
 
   positions: Position[];
 }
