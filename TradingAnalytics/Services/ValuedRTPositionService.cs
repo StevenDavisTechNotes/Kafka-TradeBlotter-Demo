@@ -2,28 +2,30 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 using KafktaListener;
 using KafktaListener.Models;
+using KafktaListener.Repositories;
 using Newtonsoft.Json;
 using TickingViewSvc_Net.Models;
 
 namespace TradingAnalytics.Services
 {
-    public class ValuedRTPositionService
+    public static class ValuedRTPositionService
     {
-        public ValuedRTPositionService()
+        public static IObservable<Exposure[]> MakeExposuresObservable(CancellationTokenSource cts)
         {
-            var lsnSodHoldings = new KafkaSpout("SodHoldings");
+            var lsnSodHoldings = new KafkaSpout("SodHoldings", cts);
             var obSodHoldings =
                 lsnSodHoldings.WhenMessageReceived.Select(
                     kafkaEvent => JsonConvert.DeserializeObject<SodHolding[]>(kafkaEvent.Text)
                     );
-            var lsnExecution = new KafkaSpout("Execution");
+            var lsnExecution = new KafkaSpout("Execution", cts);
             var obExecution =
                 lsnExecution.WhenMessageReceived.Select(
                     kafkaEvent => JsonConvert.DeserializeObject<Execution>(kafkaEvent.Text)
                     );
-            var lsnQuotes = new KafkaSpout("Quotes");
+            var lsnQuotes = new KafkaSpout("Quotes", cts);
             var obQuotes =
                 lsnQuotes.WhenMessageReceived.Select(
                     kafkaEvent => JsonConvert.DeserializeObject<Quote[]>(kafkaEvent.Text)
@@ -48,12 +50,12 @@ namespace TradingAnalytics.Services
             var obExposures =
                 obPositions
                     .CombineLatest(obQuotes,
-                        (positions, quotes) => new {positions, quotes})
+                        (positions, quotes) => new { positions, quotes })
                     .Sample(TimeSpan.FromMilliseconds(500))
                     .Select(tuple =>
                         (
                             from position in tuple.positions
-                            group position by new {position.Security}
+                            group position by new { position.Security }
                             into grp
                             join quote in tuple.quotes
                             on grp.Key.Security equals quote.Security
@@ -76,13 +78,19 @@ namespace TradingAnalytics.Services
                                 TargetIntradayPLUSD = quote.QuotePrice * targetAmount - costBasis,
                                 positions = grp.ToArray()
                             }).ToArray());
-            obExposures.Subscribe(
-                rtPositions =>
-                {
-                    Console.WriteLine(
-                        $"At {rtPositions.Max(x => x.QuoteDate)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneAmount)}");
-                },
-                ex => Console.WriteLine($"Got Exception {ex.Message}"));
+            //obExposures.Subscribe(
+            //    rtPositions =>
+            //    {
+            //        Console.WriteLine(
+            //            $"At {rtPositions.Max(x => x.QuoteDate)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneAmount)}");
+            //    },
+            //    ex => Console.WriteLine($"Got Exception {ex.Message}"));
+            return obExposures;
+        }
+
+        public static IObservable<string> SerializeExposures(IObservable<Exposure[]> exposuresObservable)
+        {
+            return exposuresObservable.Select(JsonConvert.SerializeObject);
         }
     }
 }

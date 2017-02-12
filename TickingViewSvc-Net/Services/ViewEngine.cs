@@ -29,9 +29,9 @@ namespace TickingViewSvc_Net.Services
             aggPositions = rollupPositions();
             pricers = securities.ToDictionary(x => x, x => new RandomPricer());
 
-            var sodHoldingsListener = new KafkaSpout("SodHoldings");
-            var executionListener = new KafkaSpout("Execution");
-            var quotesListener = new KafkaSpout("Quotes");
+            //var sodHoldingsListener = new KafkaSpoutComplicated("SodHoldings");
+            //var executionListener = new KafkaSpoutComplicated("Execution");
+            //var quotesListener = new KafkaSpoutComplicated("Quotes");
 
             //new DebugKafkaListener(sodHoldingsListener);
             //new DebugKafkaListener(executionListener);

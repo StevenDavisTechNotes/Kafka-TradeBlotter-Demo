@@ -1,22 +1,27 @@
 ﻿using System;
-using System.Threading;
+using System.Linq;
+using KafktaListener.Repositories;
+using TickingViewSvc_Net.Models;
 
 namespace KafktaListener
 {
-    public class DebugKafkaListener
+    public static class DebugKafkaListener
     {
-        public DebugKafkaListener(KafkaSpout listener)
+        public static void PrintFromSpout(KafkaSpout listener)
         {
-            var saveListener = listener;
-            //new Thread(() =>
-            //{
-            //    foreach (var msg in saveListener.MessageSpout.GetConsumingEnumerable())
-            //    {
-            //        Console.WriteLine($"Got Offset {msg.Offset} on {msg.TextKey} of {msg.Text}");
-            //    }
-            //}).Start();
-            saveListener.WhenMessageReceived.Subscribe(
+            listener.WhenMessageReceived.Subscribe(
                 msg=> Console.WriteLine($"Got Offset {msg.Offset} on {msg.TextKey} of {msg.Text}"),
+                ex => Console.WriteLine($"Got Exception {ex.Message}"));
+        }
+
+        public static void PrintExposure(IObservable<Exposure[]> observable)
+        {
+            observable.Subscribe(
+                rtPositions =>
+                {
+                    Console.WriteLine(
+                        $"At {rtPositions.Max(x => x.QuoteDate)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneExposureUSD)} P/L= {rtPositions.Sum(x => x.DoneIntradayPLUSD)}");
+                },
                 ex => Console.WriteLine($"Got Exception {ex.Message}"));
         }
     }
