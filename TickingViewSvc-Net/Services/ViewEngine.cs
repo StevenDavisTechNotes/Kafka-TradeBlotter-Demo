@@ -38,7 +38,6 @@ namespace TickingViewSvc_Net.Services
             new DebugKafkaListener(quotesListener);
         }
 
-        private Dictionary<string, KafkaSpout> srcListeners;
         public bool IsCompleted {get;} = false;
         private IEnumerable<Position> makePositions()
         {
@@ -79,9 +78,9 @@ namespace TickingViewSvc_Net.Services
                 into grp
                 select new Exposure()
                 {
-                    security = grp.Key.Security,
-                    sodAmount = grp.Where(x=>x.PurchaseDate.HasValue).Sum(x => x.DoneAmount),
-                    cmtAmount = grp.Sum(x => x.CommittedAmount),
+                    Security = grp.Key.Security,
+                    SodAmount = grp.Where(x=>x.PurchaseDate.HasValue).Sum(x => x.DoneAmount),
+                    DoneAmount = grp.Sum(x => x.DoneAmount),
                     positions = grp.ToArray()
                 }
             ).ToArray();
@@ -99,20 +98,23 @@ namespace TickingViewSvc_Net.Services
             var sodprice = 100.00m;
             var result = (
                 from position in aggPositions
-                let shareprice = shareprices[position.security]
+                let shareprice = shareprices[position.Security]
                 select new Exposure()
                 {
-                    security = position.security,
-                    sodAmount = position.sodAmount,
-                    cmtAmount = position.cmtAmount,
+                    Security = position.Security,
+                    SodAmount = position.SodAmount,
+                    DoneAmount = position.DoneAmount,
+                    TargetAmount = position.TargetAmount,
+
+                    SodExposureUSD = position.SodAmount * shareprice,
+                    DoneExposureUSD = position.DoneAmount * shareprice,
+                    TargetExposureUSD = position.TargetAmount * shareprice,
+
+                    SodPLUSD = position.SodAmount * (shareprice - sodprice),
+                    DoneIntradayPLUSD = position.DoneAmount * (shareprice - sodprice),
+                    TargetIntradayPLUSD = position.TargetAmount * (shareprice - sodprice),
+
                     positions = position.positions,
-
-                    sodUSDExposure = position.sodAmount * shareprice,
-                    cmtUSDExposure = position.cmtAmount * shareprice,
-
-                    sodIntradayPLUSD = position.sodAmount * (shareprice - sodprice),
-                    cmtIntradayPLUSD = position.cmtAmount * (shareprice - sodprice),
-
                 }).ToArray();
             return result;
         }

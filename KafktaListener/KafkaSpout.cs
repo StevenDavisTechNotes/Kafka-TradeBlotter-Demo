@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -30,7 +31,7 @@ namespace KafktaListener
         public KafkaSpout(string Topic)
         {
             cts = new CancellationTokenSource();
-            MessageSpout = new BlockingCollection<KafkaEvent>(boundedCapacity: 1000);
+            //MessageSpout = new BlockingCollection<KafkaEvent>(boundedCapacity: 1000);
             var listenerThread = new Thread(() =>
             {
                 ConsumeDataSimple(Topic);
@@ -42,8 +43,18 @@ namespace KafktaListener
             listenerThread.Start();
         }
 
-        public BlockingCollection<KafkaEvent> MessageSpout { get; private set; }
+        private event Action<KafkaEvent> MessageReceived;
+        //public BlockingCollection<KafkaEvent> MessageSpout { get; private set; }
 
+        public IObservable<KafkaEvent> WhenMessageReceived
+        {
+            get
+            {
+                return Observable.FromEvent<KafkaEvent>(
+                    h => this.MessageReceived += h,
+                    h => this.MessageReceived -= h);
+            }
+        }
         public void Cancel()
         {
             cts.Cancel();
@@ -111,7 +122,7 @@ namespace KafktaListener
                                         "Topic:{0} Partition:{1} will read from {2} earliest:{3} latest:{4}", Topic, i,
                                         offsetBase, earliest, latest);
                                     finish = ConsumeDataOfOnePartition(kafkaSimpleManager, i, offsetBase, earliest,
-                                        latest, cancellationToken, MessageSpout, Topic, PartitionIndex, Offset);
+                                        latest, cancellationToken, Topic, PartitionIndex, Offset);
                                     if (finish)
                                         break;
                                 }
@@ -134,15 +145,15 @@ namespace KafktaListener
             }
             finally
             {
-                MessageSpout.CompleteAdding();
+                //MessageSpout.CompleteAdding();
             }
         }
 
-        private static bool ConsumeDataOfOnePartition<TKey, TData>(KafkaSimpleManager<TKey, TData> kafkaSimpleManager,
+        private bool ConsumeDataOfOnePartition<TKey, TData>(KafkaSimpleManager<TKey, TData> kafkaSimpleManager,
             int partitionID,
             long offsetBase, long earliest, long latest,
             CancellationToken cancellationToken,
-            BlockingCollection<KafkaEvent> messageSpout,
+            //BlockingCollection<KafkaEvent> messageSpout,
             string Topic,
             int PartitionIndex = -1, string Offset = "latest")
         {
@@ -193,7 +204,8 @@ namespace KafktaListener
                                     TextKey = v.Message.Key==null?"":Encoding.UTF8.GetString(v.Message.Key),
                                     Text = Encoding.UTF8.GetString(v.Message.Payload)
                                 };
-                                messageSpout.Add(convertedMsg, cancellationToken);
+                                //messageSpout.Add(convertedMsg, cancellationToken);
+                                MessageReceived?.Invoke(convertedMsg);
                             }
                             Logger.InfoFormat("Finish read partition {0} to {1}.   Earliese:{2} latest:{3} ", partitionID, offsetLast, earliest, latest);
                             offsetBase = offsetLast + 1;
