@@ -5,6 +5,7 @@ namespace KafktaListener.Models
     public class Execution
     {
         public string Key => $"{Security}-{Custodian}-{ExecutingBroker}-{DisplayPurchaseDate}";
+        public int TradingDay { get; set; }
 
         public string Security { get; set; }
         public string Custodian { get; set; }

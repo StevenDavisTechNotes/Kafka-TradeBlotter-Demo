@@ -16,21 +16,26 @@ producer.on('ready', function () {
     }
   });
   sendSodHoldings();
-  setInterval(sendExecutions, 900);
-  setInterval(sendQuotes, 700);
+  setInterval(sendSodHoldings, 15000);
+  setInterval(sendExecutions, 1500);
+  setInterval(sendQuotes, 500);
 });
 
 producer.on('error', function (err) {
   console.log('error', err);
 });
 
+var currentTargetAmount = 4000;
+var dayCount = 0;
 function sendSodHoldings() {
+  dayCount++;
   var message =[
-            { Security: "SEDOL1", SodAmount: 4000, SodPrice:100.00, PurchaseDate: '2015-12-31', Custodian: 'GSCO', CostBasis: 400*100*3/4 },
-            { Security: "SEDOL2", SodAmount: 2000, SodPrice:200.00, PurchaseDate: '2016-06-15', Custodian: 'GSCO', CostBasis: 200*200*3/4 },
-            { Security: "SEDOL3", SodAmount: 1000, SodPrice:400.00, PurchaseDate: '2017-01-04', Custodian: 'GSCO', CostBasis: 100*400*3/4 }];
+            { Security: "SEDOL1", SodAmount: currentTargetAmount/1*10, TargetAmount: currentTargetAmount/1, SodPrice:100.00, PurchaseDate: '2015-12-31', Custodian: 'GSCO', CostBasis: 400*100*3/4, TradingDay: dayCount },
+            { Security: "SEDOL2", SodAmount: currentTargetAmount/2*10, TargetAmount: currentTargetAmount/2, SodPrice:200.00, PurchaseDate: '2016-06-15', Custodian: 'GSCO', CostBasis: 200*200*3/4, TradingDay: dayCount },
+            { Security: "SEDOL3", SodAmount: currentTargetAmount/4*10, TargetAmount: currentTargetAmount/4, SodPrice:400.00, PurchaseDate: '2017-01-04', Custodian: 'GSCO', CostBasis: 100*400*3/4, TradingDay: dayCount }];
   console.log('sending SodHoldings');
   console.log(message);
+  currentTargetAmount += 10*400;
   producer.send([
     { topic: 'SodHoldings', messages: [JSON.stringify(message)] }
   ], function (err, data) {
@@ -44,9 +49,9 @@ function sendExecutions() {
   let count = fillCount;
   let now = (new Date()).toISOString();
   let messages =[
-            JSON.stringify({ Security: "SEDOL1", FillAmount: 400, FillPrice:Number((100.00*(1+0.0101*((count+1)%10))).toFixed(2)), PurchaseDate:now, Custodian: 'GSCO', ExecutingBroker: 'ACAP' }),
-            JSON.stringify({ Security: "SEDOL2", FillAmount: 200, FillPrice:Number((200.00*(1+0.0101*((count+2)%10))).toFixed(2)), PurchaseDate:now, Custodian: 'GSCO', ExecutingBroker: 'ACAP' }),
-            JSON.stringify({ Security: "SEDOL3", FillAmount: 100, FillPrice:Number((400.00*(1+0.0101*((count+3)%10))).toFixed(2)), PurchaseDate:now, Custodian: 'GSCO', ExecutingBroker: 'ACAP' })];
+            JSON.stringify({ Security: "SEDOL1", FillAmount: 400, FillPrice:Number((100.00*(1+0.00101*((count+1)%10))).toFixed(2)), PurchaseDate:now, Custodian: 'GSCO', ExecutingBroker: 'ACAP', TradingDay: dayCount }),
+            JSON.stringify({ Security: "SEDOL2", FillAmount: 200, FillPrice:Number((200.00*(1+0.00101*((count+2)%10))).toFixed(2)), PurchaseDate:now, Custodian: 'GSCO', ExecutingBroker: 'ACAP', TradingDay: dayCount }),
+            JSON.stringify({ Security: "SEDOL3", FillAmount: 100, FillPrice:Number((400.00*(1+0.00101*((count+3)%10))).toFixed(2)), PurchaseDate:now, Custodian: 'GSCO', ExecutingBroker: 'ACAP', TradingDay: dayCount })];
   ++fillCount;
   console.log('sending Execution');
   console.log(messages);
@@ -65,9 +70,9 @@ function sendQuotes() {
   let count = quoteCount;
   let now = (new Date()).toISOString();
   let message =[
-            { Security: "SEDOL1", QuotePrice:Number((100.00*(1+0.0101*((count+1)%10))).toFixed(2)), QuoteDate: now },
-            { Security: "SEDOL2", QuotePrice:Number((200.00*(1+0.0101*((count+2)%10))).toFixed(2)), QuoteDate: now },
-            { Security: "SEDOL3", QuotePrice:Number((400.00*(1+0.0101*((count+3)%10))).toFixed(2)), QuoteDate: now }];
+            { Security: "SEDOL1", QuotePrice:Number((100.00*(1+0.00101*((count+1)%10))).toFixed(2)), QuoteDate: now },
+            { Security: "SEDOL2", QuotePrice:Number((200.00*(1+0.00101*((count+2)%10))).toFixed(2)), QuoteDate: now },
+            { Security: "SEDOL3", QuotePrice:Number((400.00*(1+0.00101*((count+3)%10))).toFixed(2)), QuoteDate: now }];
   ++quoteCount;
   console.log('sending Quotes');
   console.log(message);

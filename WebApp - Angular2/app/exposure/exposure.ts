@@ -1,5 +1,6 @@
 export interface Exposure {
   Key: string;
+  TradingDay: number;
   QuoteDate: Date;
   Security: string;
 
@@ -15,5 +16,7 @@ export interface Exposure {
   DoneIntradayPLUSD: number;
   TargetIntradayPLUSD: number;
 
+  AvgReturnPerDoneShareUSD: number;
+  
   positions: Position[];
 }

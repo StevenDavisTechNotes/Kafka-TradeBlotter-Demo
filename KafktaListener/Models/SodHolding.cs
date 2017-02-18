@@ -5,6 +5,7 @@ namespace KafktaListener.Models
     public class SodHolding
     {
         public string Key => $"{Security}-{Custodian}-{DisplayPurchaseDate}";
+        public int TradingDay { get; set; }
 
         public string Security { get; set; }
         public string Custodian { get; set; }
@@ -13,6 +14,7 @@ namespace KafktaListener.Models
         public string DisplayPurchaseDate => PurchaseDate?.ToString("yyyy MMMM dd") ?? "Today";
 
         public decimal SodAmount { get; set; }
+        public decimal TargetAmount { get; set; }
         public decimal SodPrice { get; set; }
         public decimal CostBasis { get; set; }
     }

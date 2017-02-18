@@ -5,6 +5,7 @@ namespace TickingViewSvc_Net.Models
     public class Exposure
     {
         public string Key => $"{Security}";
+        public int TradingDay { get; set; }
         public DateTime QuoteDate { get; set; }
         public string Security { get; set; }
 

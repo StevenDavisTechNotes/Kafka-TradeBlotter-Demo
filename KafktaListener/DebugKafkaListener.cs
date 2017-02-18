@@ -23,7 +23,7 @@ namespace KafktaListener
                 rtPositions =>
                 {
                     Console.WriteLine(
-                        $"At {rtPositions.Max(x => x.QuoteDate)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneExposureUSD)} P/L= {rtPositions.Sum(x => x.DoneIntradayPLUSD)}");
+                        $"At {rtPositions.Max(x => x.QuoteDate):hh:mm:ss} on Day {rtPositions.Max(x => x.TradingDay)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneExposureUSD)} P/L= {rtPositions.Sum(x => x.DoneIntradayPLUSD)}");
                 },
                 ex => Console.WriteLine($"Got Exception {ex.Message}"));
         }

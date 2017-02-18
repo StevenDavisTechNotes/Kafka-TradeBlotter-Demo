@@ -11,22 +11,25 @@ import { Position } from "./position";
 @Component({
     moduleId: module.id,
     selector: 'exposure-master',
-    templateUrl: 'exposure-master.component.html'
+    templateUrl: 'exposure-master.component.html',
+    styleUrls: ['exposure-master.component.css']
 })
 export class ExposureMasterComponent implements OnInit {
     public gridOptions: GridOptions;
     public exposures: Object;
+    public tradingDay: number;
     public errorMessage: string = '';
     public isLoading: boolean = true;
 
 
     constructor(private exposureService: ExposureService) {
         this.gridOptions = <GridOptions>{};
-        let data = [
-            { Key: "SEDOL1", Security: "SEDOL1", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01 },
-            { Key: "SEDOL2", Security: "SEDOL2", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01 },
-            { Key: "SEDOL3", Security: "SEDOL3", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01 }];
+        let data = <Exposure[]>[
+            { Key: "SEDOL1", Security: "SEDOL1", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01, TradingDay:0 },
+            { Key: "SEDOL2", Security: "SEDOL2", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01, TradingDay:0 },
+            { Key: "SEDOL3", Security: "SEDOL3", DoneAmount: 9999, DoneExposureUSD: 333333, DoneIntradayPLUSD: 222222, AvgReturnPerDoneShareUSD: 0.01, TradingDay:0 }];
         this.gridOptions.rowData = data;
+        this.tradingDay = _.max(_.map(data, row=>row.TradingDay));
         this.exposures = _.keyBy(data, 'Key');
         this.gridOptions.columnDefs = [
             {
@@ -37,10 +40,10 @@ export class ExposureMasterComponent implements OnInit {
                 // not has exactly one child node
                 cellRendererParams: { suppressCount: false }
             },
-            { headerName: 'DoneAmount', field: 'DoneAmount', volatile: true },
-            { headerName: 'Exposure (USD)', field: 'DoneExposureUSD', cellFormatter: this.dollarCellFormatter, volatile: true },
-            { headerName: 'Intraday P/L (USD)', field: 'DoneIntradayPLUSD', cellFormatter: this.dollarCellFormatter, volatile: true },
-            { headerName: 'Return per Share (USD)', field: 'AvgReturnPerDoneShareUSD', cellFormatter: this.dollarCellFormatter, volatile: true },
+            { headerName: 'DoneAmount', field: 'DoneAmount', volatile: true, cellClass: 'number'},
+            { headerName: 'Exposure (USD)', field: 'DoneExposureUSD', cellFormatter: this.dollarCellFormatter, volatile: true, cellClass: 'number' },
+            { headerName: 'Intraday P/L (USD)', field: 'DoneIntradayPLUSD', cellFormatter: this.dollarCellFormatter, volatile: true, cellClass: 'number' },
+            { headerName: 'Return per Share (USD)', field: 'AvgReturnPerDoneShareUSD', cellFormatter: this.dollarCellFormatter, volatile: true, cellClass: 'number' },
         ];
     }
 
