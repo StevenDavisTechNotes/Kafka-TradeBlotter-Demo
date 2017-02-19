@@ -19,13 +19,20 @@ namespace TradingAnalytics.Services
             var lsnSodHoldings = new KafkaSpout("SodHoldings", cancellationToken);
             var obSodHoldings =
                 lsnSodHoldings.WhenMessageReceived.Select(
-                    kafkaEvent => JsonConvert.DeserializeObject<SodHolding[]>(kafkaEvent.Text)
+                    kafkaEvent => 
+                    JsonConvert.DeserializeObject<SodHoldingsMessage>(kafkaEvent.Text)?.Data
                     );
             var lsnExecution = new KafkaSpout("Execution", cancellationToken);
             var obExecution =
                 lsnExecution.WhenMessageReceived.Select(
-                    kafkaEvent => JsonConvert.DeserializeObject<Execution>(kafkaEvent.Text)
+                    kafkaEvent => JsonConvert.DeserializeObject<ExecutionMessage>(kafkaEvent.Text)?.Data
                     );
+            var lsnQuotes = new KafkaSpout("Quotes", cancellationToken);
+            var obQuotes =
+                lsnQuotes.WhenMessageReceived.Select(
+                    kafkaEvent => JsonConvert.DeserializeObject<QuotesMessage>(kafkaEvent.Text)?.Data
+                    );
+
             var obAggExecution = obExecution.Scan(
                 seed: new Dictionary<string, Position>(),
                 accumulator: (Dictionary<string, Position> prev, Execution execution) =>
@@ -66,11 +73,6 @@ namespace TradingAnalytics.Services
                     }
                     return next;
                 });
-            var lsnQuotes = new KafkaSpout("Quotes", cancellationToken);
-            var obQuotes =
-                lsnQuotes.WhenMessageReceived.Select(
-                    kafkaEvent => JsonConvert.DeserializeObject<Quote[]>(kafkaEvent.Text)
-                    );
             var obPositions =
                 obSodHoldings
                     .Select(holdings =>

@@ -18,4 +18,10 @@ namespace KafktaListener.Models
         public decimal SodPrice { get; set; }
         public decimal CostBasis { get; set; }
     }
+
+    public class SodHoldingsMessage
+    {
+        public string Type { get; set; }
+        public SodHolding[] Data { get; set; }
+    }
 }

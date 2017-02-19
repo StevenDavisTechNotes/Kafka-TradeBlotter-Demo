@@ -12,4 +12,10 @@ namespace KafktaListener.Models
 
         public decimal QuotePrice { get; set; }
     }
+    public class QuotesMessage
+    {
+        public string Type { get; set; }
+        public Quote[] Data { get; set; }
+    }
+
 }
