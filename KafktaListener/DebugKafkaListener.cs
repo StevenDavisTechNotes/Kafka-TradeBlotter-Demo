@@ -20,10 +20,22 @@ namespace KafktaListener
         public static void PrintExposure(IObservable<Exposure[]> observable)
         {
             observable.Subscribe(
-                rtPositions =>
+                exposures =>
                 {
-                    Console.WriteLine(
-                        $"At {rtPositions.Max(x => x.QuoteDate):hh:mm:ss} on Day {rtPositions.Max(x => x.TradingDay)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneExposureUSD)} P/L= {rtPositions.Sum(x => x.DoneIntradayPLUSD)}");
+                    if (exposures.Any())
+                    {
+                        Console.WriteLine(
+                            $@"At {
+                                exposures.Max(x => x.QuoteDate):hh:mm:ss} on Day {
+                                exposures.Max(x => x.TradingDay)} got {
+                                exposures.Sum(x => x.DoneAmount)} shares valued at {
+                                exposures.Sum(x => x.DoneExposureUSD)} P/L= {
+                                exposures.Sum(x => x.DoneIntradayPLUSD)}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Not exposures found");
+                    }
                 },
                 ex => Console.WriteLine($"Got Exception {ex.Message}"));
         }

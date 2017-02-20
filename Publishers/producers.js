@@ -75,9 +75,9 @@ function sendQuotes() {
   let now = (new Date()).toISOString();
   let message = JSON.stringify({
     "Type": "Quotes", Data: [
-      { Security: "SEDOL1", QuotePrice: Number((100.00 * (1 + 0.00101 * ((count + 1) % 10))).toFixed(2)), QuoteDate: now },
-      { Security: "SEDOL2", QuotePrice: Number((200.00 * (1 + 0.00101 * ((count + 2) % 10))).toFixed(2)), QuoteDate: now },
-      { Security: "SEDOL3", QuotePrice: Number((400.00 * (1 + 0.00101 * ((count + 3) % 10))).toFixed(2)), QuoteDate: now }]
+      { Security: "SEDOL1", QuotePrice: Number((100.00 *1.1* (1 + 0.00101 * ((count + 1) % 10))).toFixed(2)), QuoteDate: now },
+      { Security: "SEDOL2", QuotePrice: Number((200.00 *1.1* (1 + 0.00101 * ((count + 2) % 10))).toFixed(2)), QuoteDate: now },
+      { Security: "SEDOL3", QuotePrice: Number((400.00 *1.1* (1 + 0.00101 * ((count + 3) % 10))).toFixed(2)), QuoteDate: now }]
   });
   ++quoteCount;
   console.log('sending Quotes', message.substring(0,80));

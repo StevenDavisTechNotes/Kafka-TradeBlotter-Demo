@@ -72,6 +72,7 @@ export class ExposureMasterComponent implements OnInit {
             console.log('Applying update ', item);
             _.extend(this.exposures[item.Key], item);
         });
+        this.tradingDay = _.max(_.map(rawData, row=>row.TradingDay));
         this.gridOptions.api.softRefreshView();
         this.gridOptions.api.sizeColumnsToFit();
     }
