@@ -1,0 +1,9 @@
+# Kafka and Zookeeper
+
+FROM antlypls/spark:1.5.1
+
+# Install Kafka, Zookeeper and other needed things
+RUN yum install -y python-setuptools
+RUN easy_install pip
+RUN pip install kafka-python
+    

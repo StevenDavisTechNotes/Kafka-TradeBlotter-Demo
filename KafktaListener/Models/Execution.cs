@@ -17,7 +17,7 @@ namespace KafktaListener.Models
         public decimal FillAmount { get; set; }
         public decimal FillPrice { get; set; }
     }
-    public class ExecutionsMessage
+    public class ExecutionMessage
     {
         public string Type { get; set; }
         public Execution Data { get; set; }

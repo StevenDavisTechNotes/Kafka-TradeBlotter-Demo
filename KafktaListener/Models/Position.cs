@@ -41,4 +41,9 @@ namespace TickingViewSvc_Net.Models
             };
         }
     }
+    public class RtPositionsMessage
+    {
+        public string Type { get; set; }
+        public Position[] Data { get; set; }
+    }
 }

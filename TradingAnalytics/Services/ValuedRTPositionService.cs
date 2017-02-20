@@ -14,12 +14,12 @@ namespace TradingAnalytics.Services
 {
     public static class ValuedRTPositionService
     {
-        public static IObservable<Exposure[]> MakeExposuresObservable(CancellationToken cancellationToken)
+        public static IObservable<Exposure[]> MakeExposuresObservableUsingRx(CancellationToken cancellationToken)
         {
             var lsnSodHoldings = new KafkaSpout("SodHoldings", cancellationToken);
             var obSodHoldings =
                 lsnSodHoldings.WhenMessageReceived.Select(
-                    kafkaEvent => 
+                    kafkaEvent =>
                     JsonConvert.DeserializeObject<SodHoldingsMessage>(kafkaEvent.Text)?.Data
                     );
             var lsnExecution = new KafkaSpout("Execution", cancellationToken);
@@ -75,28 +75,6 @@ namespace TradingAnalytics.Services
                 });
             var obPositions =
                 obSodHoldings
-                    .Select(holdings =>
-                    {
-                        var newPositions = holdings
-                            .Select(holding =>
-                                new Position()
-                                {
-                                    Security = holding.Security,
-                                    Custodian = holding.Custodian,
-                                    SodAmount = holding.SodAmount,
-                                    TargetAmount = holding.SodAmount,
-                                    StagedAmount = holding.SodAmount,
-                                    CommittedAmount = holding.SodAmount,
-                                    DoneAmount = holding.SodAmount,
-                                    SodPrice = holding.SodPrice,
-                                    CostBasis = holding.CostBasis,
-                                    TradingDay = holding.TradingDay
-                                })
-                            .ToArray();
-                        return newPositions;
-                    });
-            var obPositions2 =
-                obSodHoldings
                     .CombineLatest(obAggExecution,
                         (holdings, netExecutions) =>
                         {
@@ -144,7 +122,7 @@ namespace TradingAnalytics.Services
             //    },
             //    ex => Console.WriteLine($"Got Exception {ex.Message}"));
             var obExposures =
-                obPositions2
+                obPositions
                     .CombineLatest(obQuotes,
                         (positions, quotes) => new { positions, quotes })
                     .Sample(TimeSpan.FromMilliseconds(500))
@@ -162,7 +140,7 @@ namespace TradingAnalytics.Services
                             let costBasis = grp.Sum(x => x.CostBasis)
                             select new Exposure()
                             {
-                                TradingDay = grp.Max(x=>x.TradingDay),
+                                TradingDay = grp.Max(x => x.TradingDay),
                                 QuoteDate = quote.QuoteDate,
                                 Security = grp.Key.Security,
                                 SodAmount = sodAmount,
@@ -174,6 +152,63 @@ namespace TradingAnalytics.Services
                                 SodIntradayPLUSD = (quote.QuotePrice - sodPrice) * sodAmount,
                                 DoneIntradayPLUSD = (quote.QuotePrice - sodPrice) * doneAmount,
                                 TargetIntradayPLUSD = (quote.QuotePrice - sodPrice) * targetAmount,
+                                AvgReturnPerDoneShareUSD = quote.QuotePrice - costBasis / doneAmount,
+                                positions = grp.ToArray()
+                            }).ToArray());
+            //obExposures.Subscribe(
+            //    rtPositions =>
+            //    {
+            //        Console.WriteLine(
+            //            $"At {rtPositions.Max(x => x.QuoteDate)} got {rtPositions.Sum(x => x.DoneAmount)} shares valued at {rtPositions.Sum(x => x.DoneExposureUSD)}");
+            //    },
+            //    ex => Console.WriteLine($"Got Exception {ex.Message}"));
+            return obExposures;
+        }
+
+        public static IObservable<Exposure[]> MakeExposuresObservable(CancellationToken cancellationToken)
+        {
+            var lsnRtPositions = new KafkaSpout("RtPositions", cancellationToken);
+            var obRtPositions =
+                lsnRtPositions.WhenMessageReceived.Select(
+                    kafkaEvent => JsonConvert.DeserializeObject<RtPositionsMessage>(kafkaEvent.Text)?.Data
+                    );
+            var lsnQuotes = new KafkaSpout("Quotes", cancellationToken);
+            var obQuotes =
+                lsnQuotes.WhenMessageReceived.Select(
+                    kafkaEvent => JsonConvert.DeserializeObject<QuotesMessage>(kafkaEvent.Text)?.Data
+                    );
+
+            var obExposures =
+                obRtPositions
+                    .CombineLatest(obQuotes,
+                        (positions, quotes) => new { positions, quotes })
+                    .Sample(TimeSpan.FromMilliseconds(500))
+                    .Select(tuple =>
+                        (
+                            from position in tuple.positions
+                            group position by new { position.Security }
+                            into grp
+                            join quote in tuple.quotes
+                            on grp.Key.Security equals quote.Security
+                            let sodAmount = grp.Sum(x => x.SodAmount)
+                            let sodPrice = grp.Max(x => x.SodPrice)
+                            //let targetAmount = grp.Sum(x => x.TargetAmount)
+                            let doneAmount = grp.Sum(x => x.DoneAmount)
+                            let costBasis = grp.Sum(x => x.CostBasis)
+                            select new Exposure()
+                            {
+                                TradingDay = grp.Max(x => x.TradingDay),
+                                QuoteDate = quote.QuoteDate,
+                                Security = grp.Key.Security,
+                                SodAmount = sodAmount,
+                                DoneAmount = doneAmount,
+                                //TargetAmount = targetAmount,
+                                SodExposureUSD = quote.QuotePrice * sodAmount,
+                                DoneExposureUSD = quote.QuotePrice * doneAmount,
+                                //TargetExposureUSD = quote.QuotePrice * targetAmount,
+                                SodIntradayPLUSD = (quote.QuotePrice - sodPrice) * sodAmount,
+                                DoneIntradayPLUSD = (quote.QuotePrice - sodPrice) * doneAmount,
+                                //TargetIntradayPLUSD = (quote.QuotePrice - sodPrice) * targetAmount,
                                 AvgReturnPerDoneShareUSD = quote.QuotePrice - costBasis / doneAmount,
                                 positions = grp.ToArray()
                             }).ToArray());

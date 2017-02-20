@@ -1,18 +1,25 @@
 #!/usr/bin/python
-# use pyspark  --master 'local[3]' --jars '/app/spark-streaming-kafka-assembly_2.10-1.5.1.jar'
-# spark-submit \
+# use clear && pyspark  --master 'local[3]' --jars '/app/spark-streaming-kafka-assembly_2.10-1.5.1.jar'
+# clear && spark-submit \
 #     --jars /app/spark-streaming-kafka-assembly_2.10-1.5.1.jar \
 #     --master spark://localhost:7077 \
 #     IntradayPosition.py
+
 import time
+import sys
 import json
-from pyspark.sql import SQLContext
 from pyspark import SparkContext, SparkConf, AccumulatorParam
+from pyspark.sql import SQLContext
+from operator import add
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from kafka import KafkaProducer
 
-producer = KafkaProducer(bootstrap_servers='localhost:9092')
+conf = (SparkConf()
+         .setMaster("local[3]")
+         .setAppName("IntradayPosition")
+         .set("spark.executor.memory", "512k"))
+sc = SparkContext(conf = conf)
 
 logger = sc._jvm.org.apache.log4j
 logger.LogManager.getLogger("org"). setLevel(logger.Level.ERROR)
@@ -90,17 +97,21 @@ def CombineHoldingsAndExecutions(args):
 dstrJoined = dstrSodHoldingsTicking.join(dstrNetExecution)\
   .map(CombineHoldingsAndExecutions)
 
-dstrJoined.pprint()
-
-def WriteBackToKafka(message):
-    records = message.collect()
-    producer.send('RtPosition', str(records))
+def WriteBackToKafka(rddRtPositions):
+    if not 'producer' in globals():
+        tproducer = KafkaProducer(bootstrap_servers='SparkTest:9092')
+        globals()['producer'] = tproducer
+    producer = globals()['producer']
+    records = rddRtPositions.collect()
+    rtPositions = { 'Type':'RtPositions', 'Data': records}
+    producer.send('RtPositions', json.dumps(rtPositions))
     producer.flush()
 
+dstrJoined.pprint()
 dstrJoined.foreachRDD(WriteBackToKafka)
 
 ssc.start()
 time.sleep(20)
-ssc.stop()
-# ssc.awaitTermination()
-exit()
+ssc.awaitTermination()
+# ssc.stop()
+# exit()
