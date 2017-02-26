@@ -70,6 +70,10 @@ if [ ! -z "$AUTO_CREATE_TOPICS" ]; then
     echo "auto.create.topics.enable=$AUTO_CREATE_TOPICS" >> $KAFKA_HOME/config/server.properties
 fi
 
+# Allow topic deletion
+sed -i "/^delete.topic.enable/d" $KAFKA_HOME/config/server.properties
+echo "delete.topic.enable=true" >>  $KAFKA_HOME/config/server.properties
+
 cat $KAFKA_HOME/config/server.properties
 
 # Run Kafka

@@ -9,7 +9,7 @@ kafka:
     - 2181:2181
     - 9092:9092
   extra_hosts:
-    - "SparkTest:192.168.56.32"
+    - "SparkTest:${MY_PUBLIC_IP}"
 
 spark:
   #image: antlypls/spark:1.5.1
@@ -18,8 +18,8 @@ spark:
   environment:
     - PYTHONPATH=/usr/local/spark/python/:/usr/local/spark/python/lib/py4j-0.8.2.1-src.zip
   volumes:
-    - ./test:/app
+    - ./app:/app
   links:
    - kafka
   extra_hosts:
-    - "SparkTest:192.168.56.32"
+    - "SparkTest:${MY_PUBLIC_IP}"

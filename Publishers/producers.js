@@ -51,9 +51,9 @@ function sendSodHoldings() {
 
 var fillCount = 0;
 function sendExecutions() {
-  let count = fillCount;
-  let now = (new Date()).toISOString();
-  let messages = [
+  var count = fillCount;
+  var now = (new Date()).toISOString();
+  var messages = [
     JSON.stringify({ "Type": "Execution", Data: { Security: "SEDOL1", FillAmount: 400, FillPrice: Number((100.00 * (1 + 0.00101 * ((count + 1) % 10))).toFixed(2)), PurchaseDate: now, TradingDay: dayCount } }),
     JSON.stringify({ "Type": "Execution", Data: { Security: "SEDOL2", FillAmount: 200, FillPrice: Number((200.00 * (1 + 0.00101 * ((count + 2) % 10))).toFixed(2)), PurchaseDate: now, TradingDay: dayCount } }),
     JSON.stringify({ "Type": "Execution", Data: { Security: "SEDOL3", FillAmount: 100, FillPrice: Number((400.00 * (1 + 0.00101 * ((count + 3) % 10))).toFixed(2)), PurchaseDate: now, TradingDay: dayCount } })];
@@ -71,9 +71,9 @@ function sendExecutions() {
 
 var quoteCount = 0;
 function sendQuotes() {
-  let count = quoteCount;
-  let now = (new Date()).toISOString();
-  let message = JSON.stringify({
+  var count = quoteCount;
+  var now = (new Date()).toISOString();
+  var message = JSON.stringify({
     "Type": "Quotes", Data: [
       { Security: "SEDOL1", QuotePrice: Number((100.00 *1.1* (1 + 0.00101 * ((count + 1) % 10))).toFixed(2)), QuoteDate: now },
       { Security: "SEDOL2", QuotePrice: Number((200.00 *1.1* (1 + 0.00101 * ((count + 2) % 10))).toFixed(2)), QuoteDate: now },
