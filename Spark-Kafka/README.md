@@ -1,4 +1,5 @@
 ````
+Build TickingViewSvc.sln
 cd MyKafka
   docker build -t mykafka .
   cd ..
@@ -46,7 +47,7 @@ Verify Working Spark
       app/direct_kafka_word_count.jar kafka:9092 word-count
     exit
 Install Node.JS
-  cd ~/Kafka-Blotter/Publishers
+  cd ~/Kafka-TradeBlotter-Demo/Publishers
     sudo apt-get remove -y nodejs npm nodejs-legacy
     sudo apt install -y appstream/xenial-backports
     sudo appstreamcli refresh --force
@@ -55,11 +56,13 @@ Install Node.JS
     npm install
 Run Demo
   docker exec -it $(docker-compose ps -q kafka) bash
-  cd ~/Kafka-Blotter/Publishers
+  cd ~/Kafka-TradeBlotter-Demo/Publishers
+    npm update
     node producers.js
-  cd ~/Kafka-Blotter/Publishers
+  cd ~/Kafka-TradeBlotter-Demo/Publishers
     node consumer.js
   docker exec -it $(docker-compose ps -q spark) bash
+    cd /app
     clear && spark-submit \
       --jars /app/spark-streaming-kafka-assembly_2.10-1.5.1.jar \
       --master spark://localhost:7077 \
