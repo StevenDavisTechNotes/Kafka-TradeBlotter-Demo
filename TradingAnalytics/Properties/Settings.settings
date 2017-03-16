@@ -3,7 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="ZookeeperUrl" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">SparkTest:2181</Value>
+      <Value Profile="(Default)">ZookeeperHost:2181</Value>
+    </Setting>
+    <Setting Name="KafkaUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">KafkaHost:9020</Value>
     </Setting>
   </Settings>
 </SettingsFile>

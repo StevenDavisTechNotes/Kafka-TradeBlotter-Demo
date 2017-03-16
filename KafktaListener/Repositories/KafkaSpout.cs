@@ -47,15 +47,14 @@ namespace KafktaListener.Repositories
         {
             string TopicName = topic;
             string ClientId = $"KafkaSpout for {topic}";
-            var urlZooKeeper = new Uri("http://" + Properties.Settings.Default.ZookeeperUrl);
-            string Host = urlZooKeeper.Host;
+            var urlKafka = new Uri("http://" + Properties.Settings.Default.KafkaUrl);
             int PartitionId = 0;
 
             var brokerConfig = new BrokerConfiguration()
             {
                 BrokerId = 0,
-                Host = Host,
-                Port = 9092,
+                Host = urlKafka.Host,
+                Port = urlKafka.Port,
             };
 
             var consumerConfig = new ConsumerConfiguration
@@ -67,7 +66,7 @@ namespace KafktaListener.Repositories
 
             KafkaSimpleManagerConfiguration simpleConfig = new KafkaSimpleManagerConfiguration
             {
-                Zookeeper = string.Format("{0}:2181", Host)
+                Zookeeper = Properties.Settings.Default.ZookeeperUrl
             };
 
             simpleConfig.Verify();
@@ -106,7 +105,7 @@ namespace KafktaListener.Repositories
 
                         kafkaSimpleManager.RefreshAndGetOffset(0, ClientId, correlationID, TopicName, PartitionId, true, out earliest, out latest);
                         var latestOffset = KafkaClientHelperUtils.GetValidStartReadOffset(KafkaOffsetType.Latest, earliest, latest, 100, 1);
-                        var consumerData = consumer.FetchAndGetDetail(Host, TopicName, 0, PartitionId, latestOffset, int.MaxValue, 1000, 1000); // read data here
+                        var consumerData = consumer.FetchAndGetDetail(ClientId, TopicName, 0, PartitionId, latestOffset, int.MaxValue, 1000, 1000); // read data here
 
                         foreach (var message in consumerData.MessageAndOffsets.Select(x=>x.Message))
                         {

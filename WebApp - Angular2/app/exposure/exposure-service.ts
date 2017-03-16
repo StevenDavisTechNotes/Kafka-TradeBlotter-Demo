@@ -11,15 +11,6 @@ export class ExposureService {
   constructor(private http: Http) {
   }
 
-  getAll(): Observable<Exposure[]> {
-    let exposures$ = this.http
-      .get(`${this.baseUrl}/ViewPosition`, { headers: this.getHeaders() })
-      .map((res: Response) => <Exposure[]>res.json())
-      .map(toExposure)
-      .catch(handleError);
-    return exposures$;
-  }
-
   getAllInterval(): Observable<Exposure[]> {
     let fetchExposures$ =
       this.http

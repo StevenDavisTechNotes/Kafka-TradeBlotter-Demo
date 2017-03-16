@@ -53,7 +53,7 @@ namespace KafktaListener
 
         private void MessagePumpLoop()
         {
-            var options = new KafkaOptions(new Uri("http://"+Properties.Settings.Default.ZookeeperUrl))
+            var options = new KafkaOptions(new Uri("http://"+Properties.Settings.Default.KafkaUrl))
             {
                 Log = new ConsoleLog()
             };

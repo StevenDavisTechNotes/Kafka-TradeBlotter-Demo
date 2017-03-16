@@ -25,10 +25,19 @@ namespace TickingViewSvc_Net.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SparkTest:2181")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ZookeeperHost:2181")]
         public string ZookeeperUrl {
             get {
                 return ((string)(this["ZookeeperUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("KafkaHost:9092")]
+        public string KafkaUrl {
+            get {
+                return ((string)(this["KafkaUrl"]));
             }
         }
     }

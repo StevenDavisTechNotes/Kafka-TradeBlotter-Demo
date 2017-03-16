@@ -1,5 +1,6 @@
 ````
 Build TickingViewSvc.sln
+cd ~/Kafka-TradeBlotter-Demo/Spark-Kafka
 cd MyKafka
   docker build -t mykafka .
   cd ..
@@ -17,10 +18,18 @@ cd Build-MySparkApp-Docker
   cd ..
 cd app
   wget http://central.maven.org/maven2/org/apache/spark/spark-streaming-kafka-assembly_2.10/1.5.1/spark-streaming-kafka-assembly_2.10-1.5.1.jar
+# fix-up hosts
 cd ..
+  # use this in Azure
   export MY_PUBLIC_IP="$(curl -4 http://l2.io/ip)"
-  sudo sed -i "/ SparkTest$/d" /etc/hosts
-  sudo sed -i "2i$MY_PUBLIC_IP SparkTest" /etc/hosts
+  # use this locally
+  export MY_PUBLIC_IP="192.168.56.32"
+  cat /etc/hosts
+  sudo sed -i "/ ZookeeperHost$/d" /etc/hosts
+  sudo sed -i "/ KafkaHost$/d" /etc/hosts
+  sudo sed -i "3i$MY_PUBLIC_IP KafkaHost" /etc/hosts
+  sudo sed -i "3i$MY_PUBLIC_IP ZookeeperHost" /etc/hosts
+  cat /etc/hosts
   # docker-compose up
   docker-compose run spark
 Verify Working Kafka
@@ -54,18 +63,27 @@ Install Node.JS
     sudo apt-get update
     sudo apt-get install -y nodejs npm nodejs-legacy
     npm install
+Build dependencies.zip
+  docker exec -it $(docker-compose ps -q spark) bash
+    cd /app
+    # zip -r kafka-python.zip /usr/lib/python2.6/site-packages/kafka
+    pip install -t dependencies -r requirements.txt
+    cd dependencies
+    zip -r ../dependencies.zip .
+    exit
+
 Run Demo
   docker exec -it $(docker-compose ps -q kafka) bash
+
   cd ~/Kafka-TradeBlotter-Demo/Publishers
-    npm update
     node producers.js
   cd ~/Kafka-TradeBlotter-Demo/Publishers
     node consumer.js
-  docker exec -it $(docker-compose ps -q spark) bash
-    cd /app
-    clear && spark-submit \
+  docker exec -it $(docker-compose ps -q spark) bash    
+    clear && cd /app && spark-submit \
       --jars /app/spark-streaming-kafka-assembly_2.10-1.5.1.jar \
       --master spark://localhost:7077 \
+      --py-files dependencies.zip \
       IntradayPosition.py
 
   

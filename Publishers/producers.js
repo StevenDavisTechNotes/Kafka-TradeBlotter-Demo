@@ -1,7 +1,7 @@
 var kafka = require('kafka-node');
 var HighLevelProducer = kafka.HighLevelProducer;
 var Client = kafka.Client;
-var client = new Client('SparkTest:2181');
+var client = new Client('ZookeeperHost:2181');
 var argv = require('optimist').argv;
 var rets = 0;
 var producer = new HighLevelProducer(client);
@@ -16,9 +16,9 @@ producer.on('ready', function () {
     }
   });
   sendSodHoldings();
-  setInterval(sendSodHoldings, 15000);
-  setInterval(sendExecutions, 1500);
-  setInterval(sendQuotes, 500);
+  setInterval(sendQuotes, 100);
+  setInterval(sendExecutions, 900);
+  setInterval(sendSodHoldings, 10*900);
 });
 
 producer.on('error', function (err) {
@@ -39,7 +39,7 @@ function sendSodHoldings() {
         // { Security: "SEDOL2", SodAmount: currentTargetAmount / 2 * 10, TargetAmount: currentTargetAmount / 2, SodPrice: 200.00, PurchaseDate: '2016-06-15', Custodian: 'GSCO', CostBasis: 200 * 200 * 3 / 4, TradingDay: dayCount },
         // { Security: "SEDOL3", SodAmount: currentTargetAmount / 4 * 10, TargetAmount: currentTargetAmount / 4, SodPrice: 400.00, PurchaseDate: '2017-01-04', Custodian: 'GSCO', CostBasis: 100 * 400 * 3 / 4, TradingDay: dayCount }]
     });
-  console.log('sending SodHoldings', message.substring(0,80));
+  console.log('sending SodHoldings', dayCount, message.substring(0,80));
   currentTargetAmount += 10 * 400;
   producer.send([
     { topic: 'SodHoldings', messages: [message] }
@@ -59,7 +59,7 @@ function sendExecutions() {
     JSON.stringify({ "Type": "Execution", Data: { Security: "SEDOL3", FillAmount: 100, FillPrice: Number((400.00 * (1 + 0.00101 * ((count + 3) % 10))).toFixed(2)), PurchaseDate: now, TradingDay: dayCount } })];
   ++fillCount;
   messages.forEach((message) => {
-  console.log('sending Execution', message.substring(0,80));
+  console.log('sending Execution', dayCount, fillCount, message.substring(0,80));
     producer.send([
       { topic: 'Execution', messages: [message] }
     ], function (err, data) {
@@ -80,7 +80,7 @@ function sendQuotes() {
       { Security: "SEDOL3", QuotePrice: Number((400.00 *1.1* (1 + 0.00101 * ((count + 3) % 10))).toFixed(2)), QuoteDate: now }]
   });
   ++quoteCount;
-  console.log('sending Quotes', message.substring(0,80));
+  console.log('sending Quotes', quoteCount, message.substring(0,80));
   producer.send([
     { topic: 'Quotes', messages: [message] }
   ], function (err, data) {

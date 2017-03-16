@@ -25,15 +25,14 @@ namespace KafktaListener
 
             string TopicName = topic;
             string ClientId = $"KafkaSink for {Topic}";
-            var urlZooKeeper = new Uri("http://" + Properties.Settings.Default.ZookeeperUrl);
-            string Host = urlZooKeeper.Host;
+            var urlKafka = new Uri("http://" + Properties.Settings.Default.KafkaUrl);
             int PartitionId = 0;
 
             var brokerConfig = new BrokerConfiguration()
             {
                 BrokerId = 0,
-                Host = Host,
-                Port = 9092,
+                Host = urlKafka.Host,
+                Port = urlKafka.Port,
             };
 
             var consumerConfig = new ConsumerConfiguration
@@ -45,7 +44,7 @@ namespace KafktaListener
 
             KafkaSimpleManagerConfiguration simpleConfig = new KafkaSimpleManagerConfiguration
             {
-                Zookeeper = string.Format("{0}:2181", Host)
+                Zookeeper = Properties.Settings.Default.ZookeeperUrl
             };
 
             simpleConfig.Verify();
