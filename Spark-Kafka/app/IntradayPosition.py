@@ -8,9 +8,9 @@
 import time
 import sys
 import json
+from operator import add
 from pyspark import SparkContext, SparkConf, AccumulatorParam
 from pyspark.sql import SQLContext
-from operator import add
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from kafka import KafkaProducer
