@@ -7,7 +7,7 @@ var rets = 0;
 var producer = new HighLevelProducer(client);
 
 producer.on('ready', function () {
-  producer.createTopics(['SodHoldings', 'Execution', 'Quotes', 'Exposures', 'RtPositions'], false, (error, data) => {
+  producer.createTopics(['SodHoldings', 'Execution', 'Quotes', 'Exposures', 'RtPositions'], false, function (error, data) {
     if (error) {
       console.log('Error creating topic', error)
       process.exit()
