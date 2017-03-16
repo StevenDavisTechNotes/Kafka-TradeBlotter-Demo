@@ -255,3 +255,7 @@ paket-files/
 **/*.js.map
 **/app/**/*.js
 WebApp - Angular2/docs/ng-example/
+Spark-Kafka/app/dependencies.zip
+Spark-Kafka/app/dependencies/
+Spark-Kafka/app/*.jar
+
