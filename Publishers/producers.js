@@ -1,13 +1,13 @@
 var kafka = require('kafka-node');
 var HighLevelProducer = kafka.HighLevelProducer;
 var Client = kafka.Client;
-var client = new Client('SparkTest:2181');
+var client = new Client('ZookeeperHost:2181');
 var argv = require('optimist').argv;
 var rets = 0;
 var producer = new HighLevelProducer(client);
 
 producer.on('ready', function () {
-  producer.createTopics(['SodHoldings', 'Execution', 'Quotes', 'Exposures', 'RtPositions'], false, (error, data) => {
+  producer.createTopics(['SodHoldings', 'Execution', 'Quotes', 'Exposures', 'RtPositions'], false, function (error, data) {
     if (error) {
       console.log('Error creating topic', error)
       process.exit()
@@ -58,7 +58,7 @@ function sendExecutions() {
     JSON.stringify({ "Type": "Execution", Data: { Security: "SEDOL2", FillAmount: 200, FillPrice: Number((200.00 * (1 + 0.00101 * ((count + 2) % 10))).toFixed(2)), PurchaseDate: now, TradingDay: dayCount } }),
     JSON.stringify({ "Type": "Execution", Data: { Security: "SEDOL3", FillAmount: 100, FillPrice: Number((400.00 * (1 + 0.00101 * ((count + 3) % 10))).toFixed(2)), PurchaseDate: now, TradingDay: dayCount } })];
   ++fillCount;
-  messages.forEach((message) => {
+  messages.forEach(function (message) {
   console.log('sending Execution', message.substring(0,80));
     producer.send([
       { topic: 'Execution', messages: [message] }

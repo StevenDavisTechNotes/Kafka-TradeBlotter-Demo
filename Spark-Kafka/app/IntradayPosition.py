@@ -8,9 +8,9 @@
 import time
 import sys
 import json
+from operator import add
 from pyspark import SparkContext, SparkConf, AccumulatorParam
 from pyspark.sql import SQLContext
-from operator import add
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from kafka import KafkaProducer
@@ -29,7 +29,7 @@ ssc = StreamingContext(sc, 1)  # 1 second window
 ssc.checkpoint('/app/checkpointDirectory')
 dstrAllMessages = KafkaUtils\
     .createDirectStream(ssc, ["SodHoldings", "Execution"],
-                        {"metadata.broker.list": "SparkTest:9092"})\
+                        {"metadata.broker.list": "KafkaHost:9092"})\
     .filter(lambda x: x is not None)\
     .map(lambda x: json.loads(x[1]))
 dstrSodHoldings = dstrAllMessages\
@@ -99,7 +99,7 @@ dstrJoined = dstrSodHoldingsTicking.join(dstrNetExecution)\
 
 def WriteBackToKafka(rddRtPositions):
     if not 'producer' in globals():
-        tproducer = KafkaProducer(bootstrap_servers='SparkTest:9092')
+        tproducer = KafkaProducer(bootstrap_servers='KafkaHost:9092')
         globals()['producer'] = tproducer
     producer = globals()['producer']
     records = rddRtPositions.collect()

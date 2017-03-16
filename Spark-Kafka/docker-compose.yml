@@ -4,12 +4,13 @@ kafka:
   environment:
     - KAFKA=localhost:9092
     - ZOOKEEPER=localhost:2181
-    - ADVERTISED_LISTENERS=PLAINTEXT://SparkTest:9092
+    - ADVERTISED_LISTENERS=PLAINTEXT://KafkaHost:9092
   ports:
     - 2181:2181
     - 9092:9092
   extra_hosts:
-    - "SparkTest:${MY_PUBLIC_IP}"
+    - "ZookeeperHost:${MY_PUBLIC_IP}"
+    - "KafkaHost:${MY_PUBLIC_IP}"
 
 spark:
   #image: antlypls/spark:1.5.1
@@ -22,4 +23,5 @@ spark:
   links:
    - kafka
   extra_hosts:
-    - "SparkTest:${MY_PUBLIC_IP}"
+    - "ZookeeperHost:${MY_PUBLIC_IP}"
+    - "KafkaHost:${MY_PUBLIC_IP}"
