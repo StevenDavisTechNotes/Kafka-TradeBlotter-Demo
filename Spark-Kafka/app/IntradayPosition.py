@@ -15,10 +15,11 @@ from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 from kafka import KafkaProducer
 
-conf = (SparkConf()
-         .setMaster("local[3]")
-         .setAppName("IntradayPosition")
-         .set("spark.executor.memory", "512k"))
+conf = SparkConf() \
+         .setMaster("local[3]") \
+         .setAppName("IntradayPosition") \
+         .set("spark.executor.memory", "512k")
+         # .set(“spark.streaming.stopGracefullyOnShutdown","true")  haven't tried this yet 
 sc = SparkContext(conf = conf)
 
 logger = sc._jvm.org.apache.log4j
